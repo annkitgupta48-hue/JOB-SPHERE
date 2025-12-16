@@ -1,0 +1,64 @@
+1. Open /pages/login.html
+2. Login: admin@jobspare.com / admin123
+3. Go to Admin Dashboard
+4. Click "📤 Import Data"
+5. Click "📁 Load Sample Data (28 Jobs)"
+6. Done! View at /pages/jobs.html1. Open /pages/login.html
+2. Login: admin@jobspare.com / admin123
+3. Go to Admin Dashboard
+4. Click "📤 Import Data"
+5. Click "📁 Load Sample Data (28 Jobs)"
+6. Done! View at /pages/jobs.html1. Open /pages/login.html
+2. Login: admin@jobspare.com / admin123
+3. Go to Admin Dashboard
+4. Click "📤 Import Data"
+5. Click "📁 Load Sample Data (28 Jobs)"
+6. Done! View at /pages/jobs.html1. Open /pages/login.html
+2. Login: admin@jobspare.com / admin123
+3. Go to Admin Dashboard
+4. Click "📤 Import Data"
+5. Click "📁 Load Sample Data (28 Jobs)"
+6. Done! View at /pages/jobs.html1. Open /pages/login.html
+2. Login: admin@jobspare.com / admin123
+3. Go to Admin Dashboard
+4. Click "📤 Import Data"
+5. Click "📁 Load Sample Data (28 Jobs)"
+6. Done! View at /pages/jobs.html1. Download CSV from Kaggle: https://www.kaggle.com/datasets/andrewmvd/job-postings
+2. Admin Dashboard → "📤 Import Data"
+3. Drag-drop your CSV file
+4. Jobs appear instantly!1. Download CSV from Kaggle: https://www.kaggle.com/datasets/andrewmvd/job-postings
+2. Admin Dashboard → "📤 Import Data"
+3. Drag-drop your CSV file
+4. Jobs appear instantly!title,company,category,location,type,salary,experience,description,skills,applyLink
+Senior Software Engineer,Google,IT & Software,Mountain View CA,Full-time,$150000-$250000,5+ years,We are looking for a Senior Software Engineer to join our Cloud Platform team. Work on large-scale distributed systems.,Go,Python,Java,Kubernetes,Docker,https://careers.google.com/jobs/
+Full Stack Developer,Meta,IT & Software,Menlo Park CA,Full-time,$130000-$200000,3+ years,Join Meta's Engineering team to build products for billions. Work on React Node.js and GraphQL.,JavaScript,React,Node.js,GraphQL,PostgreSQL,https://www.metacareers.com/
+DevOps Engineer,Netflix,IT & Software,Los Gatos CA,Full-time,$140000-$220000,4+ years,Build and maintain Netflix's cloud infrastructure. Work with AWS Kubernetes and CI/CD pipelines.,AWS,Kubernetes,Docker,CI/CD,Linux,https://jobs.netflix.com/
+Machine Learning Engineer,OpenAI,IT & Software,San Francisco CA,Full-time,$160000-$280000,3+ years,Work on cutting-edge AI and machine learning models. Build scalable ML systems.,Python,PyTorch,TensorFlow,CUDA,Deep Learning,https://openai.com/careers/
+Data Scientist,Amazon,IT & Software,Seattle WA,Full-time,$120000-$190000,2+ years,Build ML models to improve customer experience. Work with AWS SQL and big data.,Python,SQL,AWS,Pandas,Scikit-learn,https://www.amazon.jobs/
+Backend Engineer,Uber,IT & Software,San Francisco CA,Full-time,$140000-$210000,3+ years,Build scalable backend systems for the Uber platform. Handle millions of requests per second.,Java,Go,Microservices,Kafka,Redis,https://www.uber.com/careers/
+Frontend Developer,Airbnb,IT & Software,San Francisco CA,Full-time,$130000-$200000,3+ years,Create beautiful and performant web experiences. Work with React and modern JavaScript.,JavaScript,React,CSS,HTML,TypeScript,https://www.airbnb.com/careers/
+iOS Developer,Apple,IT & Software,Cupertino CA,Full-time,$150000-$240000,4+ years,Develop innovative iOS applications. Work with Swift and latest Apple frameworks.,Swift,Objective-C,iOS,UIKit,Xcode,https://www.apple.com/jobs/
+Database Administrator,Microsoft,IT & Software,Redmond WA,Full-time,$110000-$180000,5+ years,Manage and optimize Microsoft's enterprise databases. Work with SQL Server and Azure.,SQL Server,Azure,T-SQL,Database Design,Performance Tuning,https://careers.microsoft.com/
+Cloud Architect,IBM,IT & Software,Austin TX,Full-time,$135000-$205000,6+ years,Design cloud solutions for enterprise clients. Work with AWS Azure and GCP.,AWS,Azure,GCP,Architecture,Kubernetes,https://www.ibm.com/careers/
+Digital Marketing Manager,HubSpot,Marketing & Sales,Cambridge MA,Full-time,$80000-$130000,3+ years,Manage digital marketing campaigns. Expertise in SEO SEM and social media.,SEO,SEM,Google Ads,Analytics,Content Marketing,https://www.hubspot.com/careers/
+Sales Executive,Salesforce,Marketing & Sales,San Francisco CA,Full-time,$70000-$150000,2+ years,Sell Salesforce solutions to enterprise clients. Build relationships and close deals.,Sales,CRM,Enterprise Sales,Negotiation,https://www.salesforce.com/company/careers/
+Content Strategist,Buffer,Marketing & Sales,Remote,Full-time,$60000-$100000,2+ years,Develop content strategy across channels. Write blog posts guides and social content.,Content Writing,Strategy,Social Media,Analytics,https://buffer.com/careers/
+Financial Analyst,Goldman Sachs,Finance,New York NY,Full-time,$80000-$150000,1+ years,Analyze financial markets and create investment strategies. Work with Excel SQL and Python.,Excel,SQL,Python,Financial Modeling,Bloomberg,https://www.goldmansachs.com/careers/
+Accountant,Deloitte,Finance,Boston MA,Full-time,$60000-$90000,2+ years,Provide accounting services to clients. Prepare financial statements and tax returns.,Accounting,QuickBooks,Tax,SAP,Excel,https://www2.deloitte.com/us/en/careers.html
+Government Relations Officer,Ministry of Information,Government,New Delhi,Full-time,₹50000-₹80000,3+ years,Coordinate with government agencies. Manage public relations.,Government Relations,Communications,Policy,https://www.example-govt.com/
+Civil Services Officer,UPSC,Government,Pan-India,Full-time,₹56100-₹300000,0+ years,Join India's prestigious civil services. Competitive exam required.,Leadership,Administration,Public Service,https://www.upsconline.nic.in/
+Software Engineering Internship,Google,Internship,Mountain View CA,Internship,$25-$30/hour,0+ years (Students),3-month summer internship. Work on real projects. Mentorship from Google engineers.,Java,Python,C++,Data Structures,https://careers.google.com/students/
+Data Science Internship,Microsoft,Internship,Redmond WA,Internship,$22-$28/hour,0+ years (Students),Build ML models and analyze large datasets. Work with real Azure products.,Python,SQL,Machine Learning,Statistics,https://careers.microsoft.com/students/
+Product Management Internship,Meta,Internship,Menlo Park CA,Internship,$28-$32/hour,0+ years (Students),Build products used by billions. Learn PM fundamentals.,Product Strategy,Analytics,Communication,https://www.metacareers.com/students/
+Junior Developer,Startup XYZ,Fresher Roles,Bangalore,Full-time,₹400000-₹600000,0-1 years,Fresh engineering graduate? Start your career with us. Learn modern tech stack.,JavaScript,React,Node.js,Git,https://www.example-startup.com/careers
+Graduate Trainee Program,Infosys,Fresher Roles,Pan-India,Full-time,₹350000-₹500000,0+ years,6-month training program for fresh graduates. Placement after training.,Any IT Background,https://www.infosys.com/careers/
+Content Writer (Fresher),Medium,Fresher Roles,Remote,Full-time,$30000-$50000,0+ years,Write for our platform. No experience needed. Learn journalism and content creation.,Writing,Research,SEO,Editing,https://medium.com/careers/
+Operations Manager,Amazon Logistics,Private,Mumbai,Full-time,₹800000-₹1200000,2+ years,Manage warehouse operations. Optimize logistics. Handle team of 50+.,Operations,Supply Chain,Logistics,Leadership,https://www.amazon.jobs/
+HR Manager,TCS,Private,Delhi,Full-time,₹600000-₹1000000,3+ years,Manage human resources department. Recruitment training and employee relations.,HR,Recruitment,Training,Employee Relations,https://www.tcs.com/careers
+Remote Tech Lead,Toptal,IT & Software,Remote,Full-time,$120000-$180000,5+ years,Lead remote development teams. Work with top companies. Flexible hours.,Leadership,Architecture,Mentoring,https://www.toptal.com/careers/
+Virtual Assistant,Belay,Off-Campus,Remote,Full-time,$25000-$45000,0+ years,Work remotely as a virtual assistant. Flexible schedule. Training provided.,Organization,Communication,Admin,https://www.belayproducts.com/careers/
+,,,,,,,,,
+1. Download CSV from Kaggle: https://www.kaggle.com/datasets/andrewmvd/job-postings
+2. Admin Dashboard → "📤 Import Data"
+3. Drag-drop your CSV file
+4. Jobs appear instantly!

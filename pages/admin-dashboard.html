@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Admin Dashboard - Job Sphere</title>
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #e3f2fd 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .admin-header {
+            background: linear-gradient(90deg, #1b5e20, #2e7d32);
+            padding: 16px 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .admin-header h1 { font-size: 1.4rem; margin-bottom: 8px; }
+        .admin-header .header-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+        .admin-header button { background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 8px 16px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .admin-header button:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+
+        /* Main Layout */
+        main { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid rgba(0,0,0,0.1); overflow-x: auto; }
+        .tab-btn { background: none; border: none; padding: 12px 20px; cursor: pointer; font-weight: 600; color: #666; transition: all 0.2s; border-bottom: 3px solid transparent; white-space: nowrap; }
+        .tab-btn.active { color: #2e7d32; border-bottom-color: #2e7d32; }
+        .tab-btn:hover { color: #2e7d32; }
+
+        /* Tab Content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cards */
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); margin-bottom: 16px; transition: all 0.3s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+
+        /* Forms */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-bottom: 16px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; color: #333; margin-bottom: 6px; }
+        .form-group input, .form-group textarea, .form-group select { 
+            padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Poppins', sans-serif;
+            transition: all 0.2s; font-size: 0.95rem;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none; border-color: #2e7d32; box-shadow: 0 0 8px rgba(46, 125, 50, 0.1);
+        }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+
+        /* Buttons */
+        .btn-primary { background: linear-gradient(90deg, #2e7d32, #66bb6a); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(46, 125, 50, 0.2); }
+        .btn-secondary { background: #f0f0f0; color: #333; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .btn-danger { background: #f44336; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .btn-danger:hover { background: #d32f2f; }
+
+        /* Tables */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: linear-gradient(90deg, #e8f5e9, #f1f8e9); }
+        th { padding: 12px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #2e7d32; }
+        td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+        tr:hover { background: rgba(46, 125, 50, 0.02); }
+
+        /* Badges */
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; }
+        .badge-approved { background: #c8e6c9; color: #1b5e20; }
+        .badge-pending { background: #ffe0b2; color: #e65100; }
+        .badge-rejected { background: #ffcdd2; color: #b71c1c; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-left: 4px solid #2e7d32; }
+        .stat-box h3 { color: #2e7d32; font-size: 1.8rem; margin-bottom: 4px; }
+        .stat-box p { color: #666; font-size: 0.9rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .admin-header .header-actions { flex-direction: column; }
+            table { font-size: 0.85rem; }
+            th, td { padding: 8px; }
+            .tabs { overflow-x: auto; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div style="max-width: 1400px; margin: 0 auto;">
+            <h1>🎯 Admin Dashboard</h1>
+            <div class="header-actions">
+                <button onclick="location.href='data-import.html'">📤 Import Data</button>
+                <button onclick="refreshPage()">📊 Refresh</button>
+                <button onclick="goToHome()">🏠 Home</button>
+                <button onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3 id="statJobs">0</h3>
+                <p>Total Jobs</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="statPending">0</h3>
+                <p>Pending Approval</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="statUsers">0</h3>
+                <p>Registered Users</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="statCategories">0</h3>
+                <p>Categories</p>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'post-job')">➕ Post Job</button>
+            <button class="tab-btn" onclick="switchTab(event, 'manage-jobs')">📋 Manage Jobs</button>
+            <button class="tab-btn" onclick="switchTab(event, 'pending')">⏳ Pending</button>
+            <button class="tab-btn" onclick="switchTab(event, 'categories')">🏷️ Categories</button>
+            <button class="tab-btn" onclick="switchTab(event, 'links')">🔗 Links</button>
+        </div>
+
+        <!-- Tab: Post Job -->
+        <div id="post-job" class="tab-content active">
+            <div class="card">
+                <h2 style="color: #2e7d32; margin-bottom: 16px;">➕ Post a New Job</h2>
+                <form id="adminJobForm" onsubmit="adminPostJob(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Job Title *</label>
+                            <input type="text" id="admin_job_title" placeholder="e.g., Senior Developer" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Company *</label>
+                            <input type="text" id="admin_job_company" placeholder="e.g., Tech Corp" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select id="admin_job_category" required>
+                                <option value="">Select Category</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Location *</label>
+                            <input type="text" id="admin_job_location" placeholder="e.g., Bengaluru" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Job Type</label>
+                            <select id="admin_job_type">
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Apply Link *</label>
+                            <input type="url" id="admin_job_link" placeholder="https://example.com/apply" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Job Description *</label>
+                        <textarea id="admin_job_description" placeholder="Detailed job description..." required></textarea>
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <button type="submit" class="btn-primary">✅ Post Job (Auto-Approved)</button>
+                        <button type="reset" class="btn-secondary">🔄 Clear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tab: Manage Jobs -->
+        <div id="manage-jobs" class="tab-content">
+            <div class="card">
+                <h2 style="color: #2e7d32; margin-bottom: 16px;">📋 All Jobs</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Job Title</th>
+                                <th>Company</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allJobsTable">
+                            <tr><td colspan="6" style="text-align: center; color: #999;">Click Manage Jobs to load</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Pending Approval -->
+        <div id="pending" class="tab-content">
+            <div class="card">
+                <h2 style="color: #ff9800; margin-bottom: 16px;">⏳ Jobs Pending Approval</h2>
+                <div id="pendingJobsList"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Categories -->
+        <div id="categories" class="tab-content">
+            <div class="card">
+                <h2 style="color: #2e7d32; margin-bottom: 16px;">🏷️ Manage Categories</h2>
+                <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <input type="text" id="newCategoryInput" placeholder="Enter new category" style="flex: 1; min-width: 200px; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    <button onclick="adminAddCategory()" class="btn-primary">➕ Add</button>
+                </div>
+                <div id="categoriesList"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Apply Links -->
+        <div id="links" class="tab-content">
+            <div class="card">
+                <h2 style="color: #2e7d32; margin-bottom: 16px;">🔗 Edit Apply Links</h2>
+                <div id="linkAdminList"></div>
+                <button onclick="saveAllLinks()" class="btn-primary" style="margin-top: 16px;">💾 Save All</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="/db.js"></script>
+    <script src="../app.js"></script>
+    <script>
+        // Tab switching
+        function switchTab(e, tabName) {
+            e.preventDefault();
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            e.target.classList.add('active');
+            
+            // Load content
+            if (tabName === 'manage-jobs') renderAllJobs();
+            if (tabName === 'pending') renderAdminPending();
+            if (tabName === 'categories') adminRenderCategories();
+            if (tabName === 'links') renderLinkAdmin();
+        }
+
+        // Refresh page
+        function refreshPage() {
+            location.reload();
+        }
+
+        // Render Stats
+        function updateStats() {
+            const jobs = getJobs();
+            const pending = jobs.filter(j => j.status === 'pending').length;
+            
+            qs('#statJobs').textContent = jobs.length;
+            qs('#statPending').textContent = pending;
+            qs('#statUsers').textContent = getUsers().length;
+            qs('#statCategories').textContent = getCategories().length;
+        }
+
+        // Populate category dropdown
+        function populateCategoryDropdown() {
+            const select = qs('#admin_job_category');
+            const cats = getCategories();
+            select.innerHTML = '<option value="">Select Category</option>' + 
+                cats.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        // Admin Post Job (Auto-Approved)
+        function adminPostJob(e) {
+            e.preventDefault();
+            const title = valOf('#admin_job_title');
+            const company = valOf('#admin_job_company');
+            const category = valOf('#admin_job_category');
+            const location = valOf('#admin_job_location');
+            const type = valOf('#admin_job_type') || 'Full-time';
+            const applyLink = valOf('#admin_job_link');
+            const description = valOf('#admin_job_description');
+
+            if (!title || !company || !category || !location || !applyLink || !description) {
+                showNotification('Please fill all required fields', 'warning');
+                return;
+            }
+
+            const jobs = getJobs();
+            const job = {
+                id: 'j' + Date.now(),
+                title, company, category, location, type,
+                applyLink, description,
+                status: 'approved',
+                postedBy: getCurrentUser()?.id || 'admin',
+                createdAt: new Date().toISOString(),
+                views: 0,
+                applications: 0
+            };
+
+            jobs.unshift(job);
+            saveJobs(jobs);
+            showNotification(`✅ Job posted: "${title}"`, 'success');
+            qs('#adminJobForm').reset();
+            updateStats();
+            renderAllJobs();
+        }
+
+        // Render all jobs
+        function renderAllJobs() {
+            const jobs = getJobs();
+            const tbody = qs('#allJobsTable');
+            
+            if (jobs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999; padding: 20px;">No jobs yet. Post one above!</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = jobs.map(j => `
+                <tr>
+                    <td><strong>${escapeHtml(j.title)}</strong></td>
+                    <td>${escapeHtml(j.company)}</td>
+                    <td>${escapeHtml(j.category)}</td>
+                    <td>${escapeHtml(j.location)}</td>
+                    <td><span class="badge badge-${j.status === 'approved' ? 'approved' : 'pending'}">${j.status}</span></td>
+                    <td style="display: flex; gap: 6px;">
+                        <button onclick="deleteAdminJob('${j.id}')" class="btn-danger" style="font-size: 0.8rem; padding: 4px 8px;">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Delete job (Admin)
+        function deleteAdminJob(id) {
+            if (confirm('Delete this job permanently?')) {
+                let jobs = getJobs();
+                const job = jobs.find(j => j.id === id);
+                jobs = jobs.filter(j => j.id !== id);
+                saveJobs(jobs);
+                showNotification(`🗑️ Deleted: ${job.title}`, 'success');
+                renderAllJobs();
+                updateStats();
+            }
+        }
+
+        // Go to home
+        function goToHome() {
+            location.href = '/index.html';
+        }
+
+        // ===== TEST MODE FUNCTIONS (Development) =====
+        
+        // Test: Force admin login (dev mode)
+        function testAdminLogin() {
+            const users = getUsers();
+            let admin = users.find(u => u.role === 'admin');
+            if (!admin) {
+                admin = {
+                    id: 'u' + Date.now(),
+                    name: 'Admin',
+                    email: 'admin@jobspare.com',
+                    password: 'admin123',
+                    role: 'admin',
+                    createdAt: new Date().toISOString()
+                };
+                users.push(admin);
+                saveUsers(users);
+            }
+            setCurrentUser(admin);
+            showNotification('✅ Test admin login successful', 'success');
+            location.reload();
+        }
+
+        // Test: Post sample jobs
+        function testPostSampleJobs() {
+            const jobs = getJobs();
+            const sampleJobs = [
+                {
+                    id: 'j' + Date.now() + 1,
+                    title: 'Senior Full-Stack Developer',
+                    company: 'Tech Innovators Inc.',
+                    category: 'IT & Software',
+                    location: 'Bengaluru',
+                    type: 'Full-time',
+                    applyLink: 'https://techcareers.example.com/jobs/dev-senior',
+                    description: 'Looking for experienced full-stack developers with 5+ years of experience in MERN stack. Competitive salary, remote-friendly, great benefits.',
+                    status: 'approved',
+                    postedBy: 'admin',
+                    createdAt: new Date().toISOString(),
+                    views: 0,
+                    applications: 0
+                },
+                {
+                    id: 'j' + Date.now() + 2,
+                    title: 'Digital Marketing Manager',
+                    company: 'Brand Solutions Co.',
+                    category: 'Marketing & Sales',
+                    location: 'Mumbai',
+                    type: 'Full-time',
+                    applyLink: 'https://brandsolutions.example.com/careers/marketing-mgr',
+                    description: 'Lead digital marketing campaigns. Experience with Google Ads, Facebook, and content marketing required. Team of 5+ to manage.',
+                    status: 'approved',
+                    postedBy: 'admin',
+                    createdAt: new Date().toISOString(),
+                    views: 0,
+                    applications: 0
+                },
+                {
+                    id: 'j' + Date.now() + 3,
+                    title: 'Educational Content Writer',
+                    company: 'Learning Platform Ltd.',
+                    category: 'Education & Training',
+                    location: 'Remote',
+                    type: 'Part-time',
+                    applyLink: 'https://learningplatform.example.com/jobs/writer',
+                    description: 'Create engaging educational content for online courses. Background in education, technical writing, or curriculum design preferred.',
+                    status: 'approved',
+                    postedBy: 'admin',
+                    createdAt: new Date().toISOString(),
+                    views: 0,
+                    applications: 0
+                }
+            ];
+            
+            sampleJobs.forEach(j => {
+                if (!jobs.find(x => x.id === j.id)) {
+                    jobs.unshift(j);
+                }
+            });
+            
+            saveJobs(jobs);
+            showNotification(`✅ Posted ${sampleJobs.length} sample jobs`, 'success');
+            renderAllJobs();
+            updateStats();
+        }
+
+        // Test: Clear all data
+        function testClearAllData() {
+            if (confirm('⚠️ Clear ALL jobs, users, and categories? This cannot be undone!')) {
+                localStorage.clear();
+                showNotification('✅ All data cleared', 'success');
+                setTimeout(() => location.reload(), 500);
+            }
+        }
+
+        // Test: Export data to console
+        function testExportData() {
+            const data = {
+                jobs: getJobs(),
+                users: getUsers(),
+                categories: getCategories()
+            };
+            console.log('📊 JobSphere Data Export:', data);
+            showNotification('✅ Data exported to console (F12 → Console)', 'success');
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            bootstrap();
+            const current = getCurrentUser();
+            if (!current || current.role !== 'admin') {
+                showNotification('⛔ Admin access only!', 'error');
+                console.log('💡 TIP: Run testAdminLogin() in console to auto-login as admin for testing');
+                setTimeout(() => location.href = '/index.html', 1000);
+                return;
+            }
+            populateCategoryDropdown();
+            updateStats();
+            
+            // Add test functions to window for dev console
+            window.testAdminLogin = testAdminLogin;
+            window.testPostSampleJobs = testPostSampleJobs;
+            window.testClearAllData = testClearAllData;
+            window.testExportData = testExportData;
+            console.log('✅ Admin Dashboard ready! Test functions available:\n- testAdminLogin()\n- testPostSampleJobs()\n- testClearAllData()\n- testExportData()');
+        });
+
+        if (typeof sampleJobsDataset !== 'undefined') {
+          const jobs = sampleJobsDataset.map((j, idx) => ({
+            id: 'j' + Date.now() + idx,
+            title: j.title,
+            company: j.company,
+            category: j.category || 'General',
+            location: j.location || 'Remote',
+            type: j.type || 'Full-time',
+            salary: j.salary || '',
+            experience: j.experience || '',
+            description: j.description || '',
+            skills: j.skills || '',
+            applyLink: j.applyLink || '#',
+            status: 'approved',
+            postedBy: null,
+            createdAt: new Date().toISOString(),
+            views: 0,
+            applications: 0
+          }));
+          saveJobs([...getJobs(), ...jobs]);
+          renderFeaturedJobs();
+          renderStats();
+          renderHomepageCategoryTables();
+          console.log('Loaded', jobs.length, 'sample jobs into localStorage');
+        }
+    </script>
+</body>
+</html>

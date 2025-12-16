@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>System Test - Job Sphere</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #f5f5f5; font-family: 'Poppins', sans-serif; }
+    .test-container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+    .test-section { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .test-section h2 { margin-top: 0; color: #2e7d32; }
+    .test-item { padding: 12px; margin: 8px 0; border-radius: 8px; background: #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+    .test-item.pass { background: #c8e6c9; color: #1b5e20; font-weight: 600; }
+    .test-item.fail { background: #ffcdd2; color: #b71c1c; font-weight: 600; }
+    .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; background: #2e7d32; color: white; font-weight: 600; }
+    .btn:hover { background: #1b5e20; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🧪 Job Sphere System Health Check</h1>
+    
+    <div class="test-section">
+      <h2>📦 Dependencies</h2>
+      <div id="depsTest"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>💾 Storage</h2>
+      <div id="storageTest"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>🔗 Pages</h2>
+      <div id="pagesTest"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>🎯 Data Integrity</h2>
+      <div id="dataTest"></div>
+    </div>
+
+    <div class="test-section">
+      <h2>📊 Dashboard</h2>
+      <p><strong>Total Jobs:</strong> <span id="totalJobs">0</span></p>
+      <p><strong>Total Users:</strong> <span id="totalUsers">0</span></p>
+      <p><strong>Total Categories:</strong> <span id="totalCats">0</span></p>
+      <button class="btn" onclick="location.href='/index.html'">Go to Home</button>
+      <button class="btn" onclick="location.href='/pages/jobs.html'" style="margin-left: 8px;">Browse Jobs</button>
+    </div>
+  </div>
+
+  <script src="/db.js"></script>
+  <script src="app.js"></script>
+  <script>
+    function test(name, condition) {
+      return `<div class="test-item ${condition ? 'pass' : 'fail'}"><span>${name}</span> <span>${condition ? '✓' : '✗'}</span></div>`;
+    }
+
+    let results = '';
+
+    // Deps Test
+    results += test('db.js loaded', typeof DBModule !== 'undefined');
+    results += test('app.js loaded', typeof showNotification !== 'undefined');
+    results += test('DOM ready', document.body !== null);
+    document.getElementById('depsTest').innerHTML = results;
+    results = '';
+
+    // Storage Test
+    const hasUsers = getUsers().length > 0;
+    const hasJobs = getJobs().length > 0;
+    const hasCats = getCategories().length > 0;
+    results += test('Users stored', hasUsers);
+    results += test('Jobs stored', hasJobs);
+    results += test('Categories stored', hasCats);
+    results += test('localStorage accessible', !!localStorage.getItem('job_spare_users'));
+    document.getElementById('storageTest').innerHTML = results;
+    results = '';
+
+    // Pages Test
+    const pages = [
+      { name: 'Home', url: '/index.html' },
+      { name: 'Jobs', url: '/pages/jobs.html' },
+      { name: 'Categories', url: '/pages/categories.html' },
+      { name: 'Login', url: '/pages/login.html' },
+      { name: 'Signup', url: '/pages/signup.html' },
+      { name: 'Admin Dashboard', url: '/pages/admin-dashboard.html' },
+      { name: 'Post Job', url: '/pages/post-job.html' },
+      { name: 'Contact', url: '/pages/contact.html' },
+      { name: 'Govt Jobs', url: '/pages/govt.html' },
+      { name: 'Internships', url: '/pages/internships.html' },
+      { name: 'Off-Campus', url: '/pages/offcampus.html' }
+    ];
+    pages.forEach(p => {
+      results += `<div class="test-item"><a href="${p.url}" style="color: #2e7d32; text-decoration: none; font-weight: 600;">${p.name}</a> <span>→</span></div>`;
+    });
+    document.getElementById('pagesTest').innerHTML = results;
+    results = '';
+
+    // Data Test
+    const users = getUsers();
+    const jobs = getJobs();
+    const cats = getCategories();
+    results += test('Admin user exists', users.some(u => u.role === 'admin'));
+    results += test('Sample jobs exist', jobs.length > 0);
+    results += test('Default categories exist', cats.length > 0);
+    results += test('All jobs have IDs', jobs.every(j => j.id));
+    results += test('All jobs have titles', jobs.every(j => j.title));
+    results += test('All users have emails', users.every(u => u.email));
+    document.getElementById('dataTest').innerHTML = results;
+
+    // Dashboard
+    document.getElementById('totalJobs').textContent = jobs.length;
+    document.getElementById('totalUsers').textContent = users.length;
+    document.getElementById('totalCats').textContent = cats.length;
+  </script>
+</body>
+</html>

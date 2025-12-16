@@ -1,0 +1,330 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Post Job - Job Sphere</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+      /* Small page-specific enhancements: nature inspired */
+      body { background: linear-gradient(180deg, #f3fff2 0%, #e8f7ea 60%); }
+      .post-card { max-width: 900px; margin: 28px auto; padding: 20px; border-radius: 14px; box-shadow: 0 8px 30px rgba(46,125,50,0.08); background: linear-gradient(180deg, rgba(255,255,255,0.95), #fff); }
+      .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .input { padding: 12px; border-radius: 10px; border: 1px solid #e3f2e8; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+      textarea.input { grid-column: 1 / -1; resize: vertical; }
+      .actions { display:flex; gap:10px; align-items:center; margin-top:12px; }
+      .btn { background: linear-gradient(90deg,#2e7d32,#66bb6a); color:#fff; border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600; transition: transform .15s ease, box-shadow .15s ease; }
+      .btn:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(46,125,50,0.18); }
+      .btn.secondary { background: #fff; color:#2e7d32; border:1px solid #e3f2e8; }
+      .small { color:#116; text-decoration:none; font-size:0.95rem }
+      .meta-note { font-size:0.95rem; color:#386; margin-bottom:8px }
+      .preview-card { border-radius:10px; padding:12px; background:#f7fff6; box-shadow: 0 6px 18px rgba(30,100,40,0.06); margin-top:12px }
+      .action-pill { display:inline-block; padding:6px 10px; border-radius:999px; background: #e8f5e9; color:#2e7d32; font-weight:600 }
+      .extended-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 16px; }
+      .action-btn { padding: 12px 16px; border-radius: 10px; border: none; cursor: pointer; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; justify-content: center; }
+      .action-btn.primary { background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%); color: white; box-shadow: 0 4px 15px rgba(46,125,50,0.25); }
+      .action-btn.primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(46,125,50,0.35); }
+      .action-btn.secondary { background: #f0f5f2; color: #2e7d32; border: 2px solid #c8e6c9; }
+      .action-btn.secondary:hover { background: #e8f5e9; transform: scale(1.05); }
+      .action-btn.outline { background: transparent; color: #2e7d32; border: 2px solid #2e7d32; }
+      .action-btn.outline:hover { background: #f7fff6; }
+      .section-divider { height: 1px; background: linear-gradient(90deg, transparent, #c8e6c9, transparent); margin: 20px 0; }
+      .feature-badge { display: inline-block; padding: 4px 12px; background: #fff3e0; color: #d97706; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-right: 8px; margin-top: 4px; }
+      .stats-display { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+      .stat-card { background: linear-gradient(135deg, #f0f5f2 0%, #e8f5e9 100%); padding: 12px; border-radius: 8px; text-align: center; }
+      .stat-card strong { color: #2e7d32; display: block; font-size: 1.3rem; }
+      .stat-card small { color: #666; }
+      .settings-toggle { margin-top: 12px; padding: 12px; background: #fef7e0; border-left: 4px solid #fbc02d; border-radius: 6px; }
+      .checkbox-wrapper { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+      .checkbox-wrapper input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #2e7d32; }
+      .auto-expire-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+      @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .section-content { animation: slideInUp 0.4s ease; }
+    </style>
+  </head>
+  <body>
+    <header class="header"><div class="container wrap"><a class="brand" href="/index.html"><div class="logo">JS</div><div><strong>Job Sphere</strong></div></a></div></header>
+
+    <main class="container">
+      <div class="post-card">
+        <h2 style="margin-top:0;color:#184d28">Post a Job</h2>
+        <div class="meta-note">Use the buttons to <span class="action-pill">Preview</span>, <span class="action-pill">Save Draft</span> or <span class="action-pill">Publish</span>. Admin posts are auto-approved.</div>
+
+        <form id="postJobForm">
+          <div class="form-grid">
+            <input id="job_title" class="input" placeholder="Job Title *" required>
+            <input id="job_company" class="input" placeholder="Company Name *" required>
+            <input id="job_location" class="input" placeholder="Location (City)">
+            <select id="job_category" class="input"><option value="">Select Category *</option></select>
+          </div>
+          <textarea id="job_desc" class="input" placeholder="Job description *" style="height:160px"></textarea>
+          <input id="job_link" class="input" placeholder="Apply Link (https://example.com)">
+          
+          <!-- Enhanced Experience & Salary -->
+          <div class="section-divider"></div>
+          <h4 style="color: #2e7d32; margin-top: 0;">📊 Job Details</h4>
+          <div class="form-grid">
+            <input id="job_experience" class="input" placeholder="Experience required (e.g., 2-5 years)">
+            <input id="job_salary" class="input" placeholder="Salary range (e.g., $50K - $80K)">
+            <select id="job_type" class="input">
+              <option value="">Job Type</option>
+              <option value="Full-time">Full-time</option>
+              <option value="Part-time">Part-time</option>
+              <option value="Contract">Contract</option>
+              <option value="Internship">Internship</option>
+              <option value="Remote">Remote</option>
+            </select>
+            <input id="job_deadline" class="input" type="date" placeholder="Application Deadline">
+          </div>
+          
+          <!-- Skills & Requirements -->
+          <div class="section-divider"></div>
+          <h4 style="color: #2e7d32; margin-top: 0;">🎯 Requirements</h4>
+          <textarea id="job_skills" class="input" placeholder="Required skills (comma-separated)" style="height:100px"></textarea>
+          
+          <!-- Post Configuration -->
+          <div class="section-divider"></div>
+          <h4 style="color: #2e7d32; margin-top: 0;">⚙️ Post Configuration</h4>
+          <div class="settings-toggle">
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="job_featured" value="1">
+              <label for="job_featured" style="cursor: pointer; margin: 0;">⭐ Featured Posting (appears at top)</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="job_urgent" value="1">
+              <label for="job_urgent" style="cursor: pointer; margin: 0;">🔴 Urgent Hiring (highlights job)</label>
+            </div>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" id="job_auto_renew" value="1">
+              <label for="job_auto_renew" style="cursor: pointer; margin: 0;">🔄 Auto-Renew weekly</label>
+            </div>
+          </div>
+
+          <!-- Main Actions -->
+          <div class="section-divider"></div>
+          <div class="actions">
+            <button id="previewBtn" type="button" class="btn secondary">👁️ Preview</button>
+            <button id="saveDraftBtn" type="button" class="btn secondary">💾 Save Draft</button>
+            <button id="publishBtn" type="button" class="btn">✈️ Publish</button>
+            <a href="/pages/jobs.html" class="small" style="margin-left:8px">Cancel</a>
+          </div>
+          
+          <!-- Extended Actions -->
+          <div class="extended-actions">
+            <button id="saveTemplateBtn" type="button" class="action-btn secondary" title="Save as template for future posts">📋 Save Template</button>
+            <button id="scheduleBtn" type="button" class="action-btn secondary" title="Schedule posting for later">📅 Schedule Post</button>
+            <button id="autoRenewBtn" type="button" class="action-btn secondary" title="Enable weekly auto-renewal">🔁 Auto Renewal</button>
+            <button id="aiOptimizeBtn" type="button" class="action-btn secondary" title="AI suggestions to improve visibility">✨ AI Optimize</button>
+          </div>
+
+          <!-- Stats Display -->
+          <div class="stats-display">
+            <div class="stat-card">
+              <strong id="charCount">0</strong>
+              <small>Description chars</small>
+            </div>
+            <div class="stat-card">
+              <strong id="draftAutoSave">Auto</strong>
+              <small>Save Status</small>
+            </div>
+            <div class="stat-card">
+              <strong id="postCost">Free</strong>
+              <small>Posting Cost</small>
+            </div>
+          </div>
+        </form>
+
+        <div id="previewArea" class="preview-card" style="display:none"></div>
+      </div>
+    </main>
+
+    <footer class="footer">© Job Sphere</footer>
+
+    <script src="/db.js"></script>
+    <script src="/app.js"></script>
+    <script>
+      // populate category select (safe)
+      (function(){
+        const sel = document.getElementById('job_category');
+        if(!sel) return;
+        const cats = JSON.parse(localStorage.getItem('job_spare_categories')||'[]');
+        sel.innerHTML = '<option value="">Select Category *</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+      })();
+
+      // Bind new action buttons (uses functions added in app.js)
+      document.addEventListener('DOMContentLoaded', ()=>{
+        const form = document.getElementById('postJobForm');
+        const preview = document.getElementById('previewBtn');
+        const saveDraft = document.getElementById('saveDraftBtn');
+        const publish = document.getElementById('publishBtn');
+        const saveTemplate = document.getElementById('saveTemplateBtn');
+        const schedule = document.getElementById('scheduleBtn');
+        const aiOptimize = document.getElementById('aiOptimizeBtn');
+        
+        // Preview, Save Draft, Publish
+        if(preview) preview.addEventListener('click', ()=> window.previewJob && window.previewJob());
+        if(saveDraft) saveDraft.addEventListener('click', (e)=> window.saveDraft && window.saveDraft(e));
+        if(publish) publish.addEventListener('click', (e)=> window.publishJob && window.publishJob(e));
+        
+        // New Action Buttons
+        if(saveTemplate) saveTemplate.addEventListener('click', (e) => saveJobTemplate(e));
+        if(schedule) schedule.addEventListener('click', (e) => scheduleJobPost(e));
+        if(aiOptimize) aiOptimize.addEventListener('click', (e) => aiOptimizeJob(e));
+        
+        if(form) form.addEventListener('submit', (e)=> { e.preventDefault(); window.publishJob && window.publishJob(); });
+        
+        // Character counter
+        const descField = document.getElementById('job_desc');
+        if(descField) {
+          descField.addEventListener('input', () => {
+            document.getElementById('charCount').textContent = descField.value.length;
+          });
+        }
+        
+        // Auto-save to draft every 30 seconds
+        setInterval(() => {
+          const autoSaveEl = document.getElementById('draftAutoSave');
+          const now = new Date().toLocaleTimeString().split(' ')[0];
+          if(autoSaveEl) autoSaveEl.textContent = now;
+          // Auto-save logic: save current form state
+          try {
+            const jobData = {
+              title: document.getElementById('job_title')?.value,
+              company: document.getElementById('job_company')?.value,
+              location: document.getElementById('job_location')?.value,
+              category: document.getElementById('job_category')?.value,
+              desc: document.getElementById('job_desc')?.value,
+              link: document.getElementById('job_link')?.value,
+              experience: document.getElementById('job_experience')?.value,
+              salary: document.getElementById('job_salary')?.value,
+              type: document.getElementById('job_type')?.value,
+              deadline: document.getElementById('job_deadline')?.value,
+              skills: document.getElementById('job_skills')?.value,
+              timestamp: new Date().toISOString()
+            };
+            sessionStorage.setItem('job_spare_auto_save', JSON.stringify(jobData));
+          } catch(e) {}
+        }, 30000);
+        
+        // Load auto-saved data if available
+        try {
+          const saved = JSON.parse(sessionStorage.getItem('job_spare_auto_save') || '{}');
+          if(saved.title) {
+            document.getElementById('job_title').value = saved.title;
+            document.getElementById('job_company').value = saved.company;
+            document.getElementById('job_location').value = saved.location;
+            document.getElementById('job_category').value = saved.category;
+            document.getElementById('job_desc').value = saved.desc;
+            document.getElementById('job_link').value = saved.link;
+            document.getElementById('job_experience').value = saved.experience;
+            document.getElementById('job_salary').value = saved.salary;
+            document.getElementById('job_type').value = saved.type;
+            document.getElementById('job_deadline').value = saved.deadline;
+            document.getElementById('job_skills').value = saved.skills;
+            document.getElementById('charCount').textContent = saved.desc.length;
+            showNotification('Recovered auto-saved draft', 'info', 2000);
+          }
+        } catch(e) {}
+      });
+      
+      // Save Job as Template
+      function saveJobTemplate(e) {
+        e.preventDefault();
+        const title = document.getElementById('job_title').value;
+        if(!title) {
+          showNotification('Please enter a job title first', 'warning');
+          return;
+        }
+        
+        const template = {
+          id: 'tpl_' + Date.now(),
+          name: title + ' Template',
+          title: title,
+          company: document.getElementById('job_company').value,
+          location: document.getElementById('job_location').value,
+          category: document.getElementById('job_category').value,
+          desc: document.getElementById('job_desc').value,
+          link: document.getElementById('job_link').value,
+          experience: document.getElementById('job_experience').value,
+          salary: document.getElementById('job_salary').value,
+          type: document.getElementById('job_type').value,
+          skills: document.getElementById('job_skills').value,
+          createdAt: new Date().toISOString()
+        };
+        
+        const templates = JSON.parse(localStorage.getItem('job_spare_templates') || '[]');
+        templates.push(template);
+        localStorage.setItem('job_spare_templates', JSON.stringify(templates));
+        showNotification('✅ Template saved! You can reuse it later', 'success');
+      }
+      
+      // Schedule Job Post
+      function scheduleJobPost(e) {
+        e.preventDefault();
+        const deadline = prompt('When should this job be posted? (YYYY-MM-DD HH:MM)', new Date().toISOString().slice(0, 16).replace('T', ' '));
+        if(!deadline) return;
+        
+        const schedule = {
+          id: 'sch_' + Date.now(),
+          jobData: {
+            title: document.getElementById('job_title').value,
+            company: document.getElementById('job_company').value,
+            location: document.getElementById('job_location').value,
+            category: document.getElementById('job_category').value,
+            desc: document.getElementById('job_desc').value,
+            link: document.getElementById('job_link').value,
+            experience: document.getElementById('job_experience').value,
+            salary: document.getElementById('job_salary').value,
+            type: document.getElementById('job_type').value,
+            skills: document.getElementById('job_skills').value,
+            featured: document.getElementById('job_featured').checked,
+            urgent: document.getElementById('job_urgent').checked,
+          },
+          scheduledFor: deadline,
+          status: 'scheduled'
+        };
+        
+        const schedules = JSON.parse(localStorage.getItem('job_spare_schedules') || '[]');
+        schedules.push(schedule);
+        localStorage.setItem('job_spare_schedules', JSON.stringify(schedules));
+        showNotification('📅 Job scheduled for ' + deadline, 'success');
+      }
+      
+      // AI Optimize Job Description
+      function aiOptimizeJob(e) {
+        e.preventDefault();
+        const desc = document.getElementById('job_desc').value;
+        if(!desc) {
+          showNotification('Please enter a job description first', 'warning');
+          return;
+        }
+        
+        // Simple AI suggestions (in real implementation, call your backend)
+        const suggestions = [
+          { tip: '💡 Include specific technologies/tools needed', done: desc.includes('experience') },
+          { tip: '📍 Add remote work flexibility if applicable', done: desc.includes('remote') || desc.includes('flexibility') },
+          { tip: '🎯 Mention growth opportunities', done: desc.includes('growth') || desc.includes('learn') },
+          { tip: '💰 Be specific about benefits', done: desc.includes('benefit') || desc.includes('insurance') || desc.includes('401k') },
+          { tip: '🏢 Include company culture information', done: desc.includes('culture') || desc.includes('team') },
+        ];
+        
+        const tips = suggestions.filter(s => !s.done).map(s => s.tip);
+        if(tips.length === 0) {
+          showNotification('✨ Your job description looks great!', 'success');
+        } else {
+          const message = 'AI Suggestions:\n' + tips.slice(0, 3).join('\n');
+          alert(message);
+          showNotification('💭 See console for suggestions', 'info');
+        }
+      }
+      
+      // Add showNotification if not already defined
+      if(typeof showNotification === 'undefined') {
+        window.showNotification = function(msg, type, dur) {
+          console.log(msg);
+          alert(msg);
+        };
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,485 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Data Import - Admin Panel</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body { background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #e3f2fd 100%); font-family: 'Poppins', sans-serif; }
+    .admin-header { background: linear-gradient(90deg, #1b5e20, #2e7d32); color: white; padding: 20px; margin-bottom: 20px; }
+    main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .section { background: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .section h2 { margin-top: 0; color: #2e7d32; }
+    .upload-area { border: 3px dashed #2e7d32; border-radius: 12px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; }
+    .upload-area:hover { background: #f0f5f2; border-color: #1b5e20; }
+    .upload-area.dragover { background: #e8f5e9; border-color: #1b5e20; }
+    .file-input { display: none; }
+    .btn { background: linear-gradient(90deg, #2e7d32, #66bb6a); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(46,125,50,0.2); }
+    .btn-secondary { background: white; border: 2px solid #2e7d32; color: #2e7d32; }
+    .btn-secondary:hover { background: #f0f5f2; }
+    .btn-danger { background: #f44336; }
+    .progress-bar { width: 100%; height: 20px; background: #ddd; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #2e7d32, #66bb6a); width: 0%; transition: width 0.3s; }
+    .success { color: #2e7d32; font-weight: 600; }
+    .error { color: #f44336; font-weight: 600; }
+    .warning { color: #ff9800; font-weight: 600; }
+    .info-box { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 16px; border-radius: 8px; margin: 16px 0; }
+    .table-container { overflow-x: auto; margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f0f5f2; padding: 12px; text-align: left; font-weight: 600; color: #333; border-bottom: 2px solid #2e7d32; }
+    td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.04); }
+    tr:hover { background: rgba(46,125,50,0.02); }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; }
+    .status-success { background: #c8e6c9; color: #1b5e20; }
+    .status-error { background: #ffcdd2; color: #b71c1c; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: white; padding: 24px; border-radius: 12px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+    .modal-content h2 { margin-top: 0; }
+  </style>
+</head>
+<body>
+  <header class="admin-header">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <h1 style="margin: 0;">📊 Data Import Manager</h1>
+      <p style="margin: 8px 0 0 0; opacity: 0.9;">Import job data from CSV or JSON files</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- Quick Actions -->
+    <div class="section">
+      <h2>⚡ Quick Actions</h2>
+      <button class="btn" onclick="loadSampleData()">📁 Load Sample Data (28 Jobs)</button>
+      <button class="btn btn-secondary" onclick="loadSampleJobsFromJS()">📚 Load from sample-jobs.js</button>
+      <button class="btn btn-secondary" onclick="downloadTemplate()">⬇️ Download CSV Template</button>
+      <button class="btn btn-danger" onclick="clearAllJobs()" style="margin-left: 8px;">🗑️ Clear All Jobs</button>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="section">
+      <h2>📤 Upload Data</h2>
+      
+      <div class="info-box">
+        <strong>📌 Supported Formats:</strong> CSV, JSON
+        <br><strong>💾 File Requirements:</strong> CSV with headers (title, company, category, location, etc.)
+      </div>
+
+      <div id="uploadArea" class="upload-area" ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+        <div style="font-size: 3rem; margin-bottom: 10px;">📥</div>
+        <h3 style="margin: 0 0 8px 0;">Drop CSV/JSON file here</h3>
+        <p style="margin: 0 0 16px 0; color: #666;">or click to select file</p>
+        <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+      </div>
+      <input type="file" id="fileInput" class="file-input" accept=".csv,.json" onchange="handleFileSelect(event)">
+
+      <div id="uploadProgress" style="display: none; margin-top: 20px;">
+        <p>Uploading and processing...</p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p id="progressText">0%</p>
+      </div>
+    </div>
+
+    <!-- Data Preview -->
+    <div class="section">
+      <h2>👁️ Data Preview</h2>
+      <div style="margin-bottom: 16px;">
+        <label>Show records: 
+          <select id="previewLimit" onchange="updatePreview()" style="padding: 8px; border-radius: 6px; border: 1px solid #ddd;">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="25">25</option>
+            <option value="all">All</option>
+          </select>
+        </label>
+      </div>
+      <div class="table-container">
+        <table id="previewTable">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Company</th>
+              <th>Category</th>
+              <th>Location</th>
+              <th>Experience</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody id="previewBody">
+            <tr><td colspan="6" style="text-align: center; color: #999;">Load data to see preview</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="section">
+      <h2>📈 Database Statistics</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div style="background: #f0f5f2; padding: 16px; border-radius: 10px; border-left: 4px solid #2e7d32;">
+          <div style="font-size: 1.8rem; color: #1b5e20; font-weight: 700;" id="totalJobs">0</div>
+          <div style="color: #666; font-size: 0.9rem;">Total Jobs</div>
+        </div>
+        <div style="background: #e3f2fd; padding: 16px; border-radius: 10px; border-left: 4px solid #1976d2;">
+          <div style="font-size: 1.8rem; color: #1565c0; font-weight: 700;" id="totalCompanies">0</div>
+          <div style="color: #666; font-size: 0.9rem;">Companies</div>
+        </div>
+        <div style="background: #f3e5f5; padding: 16px; border-radius: 10px; border-left: 4px solid #7b1fa2;">
+          <div style="font-size: 1.8rem; color: #6a1b9a; font-weight: 700;" id="totalCategories">0</div>
+          <div style="color: #666; font-size: 0.9rem;">Categories</div>
+        </div>
+        <div style="background: #fff3e0; padding: 16px; border-radius: 10px; border-left: 4px solid #f57c00;">
+          <div style="font-size: 1.8rem; color: #e65100; font-weight: 700;" id="totalLocations">0</div>
+          <div style="color: #666; font-size: 0.9rem;">Locations</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logs -->
+    <div class="section">
+      <h2>📋 Import Log</h2>
+      <div id="importLog" style="background: #f5f5f5; padding: 16px; border-radius: 8px; max-height: 300px; overflow-y: auto; font-family: monospace; font-size: 0.85rem;">
+        <p style="color: #999; margin: 0;">Logs will appear here...</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <h2>📖 How to Import Data</h2>
+      <h3>From Kaggle:</h3>
+      <ol>
+        <li>Visit <a href="https://kaggle.com" target="_blank">Kaggle.com</a></li>
+        <li>Search for "job postings" or "job vacancies" dataset</li>
+        <li>Download the CSV file</li>
+        <li>Map columns to: title, company, category, location, type, salary, experience, description</li>
+        <li>Upload here!</li>
+      </ol>
+      <h3>CSV Format Example:</h3>
+      <pre style="background: #f0f0f0; padding: 12px; border-radius: 6px; overflow-x: auto;">title,company,category,location,type,salary
+Senior Developer,Google,IT & Software,CA,Full-time,$150k-$250k</pre>
+      <button class="btn" onclick="closeModal('helpModal')">Close</button>
+    </div>
+  </div>
+
+  <script src="/db.js"></script>
+  <script src="../app.js"></script>
+  <script src="../data/sample-jobs.js"></script>
+  <script>
+    // Check admin access
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = getCurrentUser();
+      if (!user || user.role !== 'admin') {
+        alert('Admin access required');
+        location.href = '/pages/login.html';
+        return;
+      }
+      updateStats();
+    });
+
+    function log(msg) {
+      const logEl = document.getElementById('importLog');
+      const time = new Date().toLocaleTimeString();
+      logEl.innerHTML = `<p>[${time}] ${msg}</p>` + logEl.innerHTML;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('uploadArea').classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      document.getElementById('uploadArea').classList.remove('dragover');
+    }
+
+    function handleFileDrop(e) {
+      e.preventDefault();
+      document.getElementById('uploadArea').classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFileSelect({ target: { files: files } });
+      }
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const content = event.target.result;
+        
+        if (file.name.endsWith('.csv')) {
+          importCSV(content);
+        } else if (file.name.endsWith('.json')) {
+          importJSON(content);
+        } else {
+          showError('Unsupported file format');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function importCSV(csvContent) {
+      try {
+        const lines = csvContent.trim().split('\n');
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+        const jobs = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          if (!lines[i].trim()) continue;
+          
+          const values = lines[i].split(',');
+          const job = {};
+          headers.forEach((header, idx) => {
+            job[header] = (values[idx] || '').trim();
+          });
+
+          // Standardize to required fields
+          const newJob = {
+            id: 'j' + Date.now() + Math.random(),
+            title: job.title || 'Untitled',
+            company: job.company || 'Company',
+            category: job.category || 'General',
+            location: job.location || 'Remote',
+            type: job.type || 'Full-time',
+            salary: job.salary || 'Competitive',
+            experience: job.experience || 'Entry level',
+            description: job.description || job.desc || '',
+            skills: job.skills || '',
+            applyLink: job.applylink || job.apply_link || '#',
+            status: 'approved',
+            postedBy: null,
+            createdAt: new Date().toISOString(),
+            views: 0,
+            applications: 0
+          };
+
+          if (newJob.title && newJob.company) {
+            jobs.push(newJob);
+          }
+        }
+
+        if (jobs.length === 0) {
+          showError('No valid jobs found in CSV');
+          return;
+        }
+
+        // Merge with existing jobs
+        const existing = getJobs();
+        const merged = [...existing, ...jobs];
+        saveJobs(merged);
+
+        log(`✅ Imported ${jobs.length} jobs from CSV`);
+        showSuccess(`Imported ${jobs.length} jobs successfully!`);
+        updateStats();
+        updatePreview();
+      } catch (e) {
+        log(`❌ CSV import error: ${e.message}`);
+        showError('CSV import error: ' + e.message);
+      }
+    }
+
+    function importJSON(jsonContent) {
+      try {
+        const data = JSON.parse(jsonContent);
+        const jobs = Array.isArray(data) ? data : data.jobs || [];
+
+        if (jobs.length === 0) {
+          showError('No jobs found in JSON');
+          return;
+        }
+
+        // Standardize and merge
+        const standardized = jobs.map(j => ({
+          id: j.id || 'j' + Date.now() + Math.random(),
+          title: j.title || 'Untitled',
+          company: j.company || 'Company',
+          category: j.category || 'General',
+          location: j.location || 'Remote',
+          type: j.type || 'Full-time',
+          salary: j.salary || 'Competitive',
+          experience: j.experience || 'Entry level',
+          description: j.description || '',
+          skills: j.skills || '',
+          applyLink: j.applyLink || j.apply_link || '#',
+          status: 'approved',
+          postedBy: null,
+          createdAt: new Date().toISOString(),
+          views: j.views || 0,
+          applications: j.applications || 0
+        }));
+
+        const existing = getJobs();
+        const merged = [...existing, ...standardized];
+        saveJobs(merged);
+
+        log(`✅ Imported ${standardized.length} jobs from JSON`);
+        showSuccess(`Imported ${standardized.length} jobs successfully!`);
+        updateStats();
+        updatePreview();
+      } catch (e) {
+        log(`❌ JSON import error: ${e.message}`);
+        showError('JSON import error: ' + e.message);
+      }
+    }
+
+    function loadSampleData() {
+      try {
+        // Sample data from CSV
+        const sampleJobs = [
+          { title: "Senior Software Engineer", company: "Google", category: "IT & Software", location: "Mountain View, CA", type: "Full-time", salary: "$150k-$250k", experience: "5+ years", description: "Work on large-scale systems", skills: "Go,Python,Java", applyLink: "#" },
+          { title: "Full Stack Developer", company: "Meta", category: "IT & Software", location: "Menlo Park, CA", type: "Full-time", salary: "$130k-$200k", experience: "3+ years", description: "Build products for billions", skills: "JavaScript,React,Node.js", applyLink: "#" },
+          { title: "DevOps Engineer", company: "Netflix", category: "IT & Software", location: "Los Gatos, CA", type: "Full-time", salary: "$140k-$220k", experience: "4+ years", description: "Manage cloud infrastructure", skills: "AWS,Kubernetes,Docker", applyLink: "#" },
+          { title: "Machine Learning Engineer", company: "OpenAI", category: "IT & Software", location: "San Francisco, CA", type: "Full-time", salary: "$160k-$280k", experience: "3+ years", description: "Build AI models", skills: "Python,PyTorch,TensorFlow", applyLink: "#" },
+          { title: "Data Scientist", company: "Amazon", category: "IT & Software", location: "Seattle, WA", type: "Full-time", salary: "$120k-$190k", experience: "2+ years", description: "Build ML models", skills: "Python,SQL,AWS", applyLink: "#" }
+        ];
+
+        const jobs = sampleJobs.map((j, idx) => ({
+          id: 'j' + Date.now() + idx,
+          title: j.title,
+          company: j.company,
+          category: j.category,
+          location: j.location,
+          type: j.type,
+          salary: j.salary,
+          experience: j.experience,
+          description: j.description,
+          skills: j.skills,
+          applyLink: j.applyLink,
+          status: 'approved',
+          postedBy: null,
+          createdAt: new Date().toISOString(),
+          views: 0,
+          applications: 0
+        }));
+
+        const existing = getJobs();
+        const merged = [...existing, ...jobs];
+        saveJobs(merged);
+
+        log(`✅ Loaded ${jobs.length} sample jobs`);
+        showSuccess(`Loaded ${jobs.length} sample jobs!`);
+        updateStats();
+        updatePreview();
+      } catch (e) {
+        log(`❌ Error: ${e.message}`);
+        showError('Error loading sample data');
+      }
+    }
+
+    function loadSampleJobsFromJS() {
+      try {
+        if (typeof sampleJobsDataset === 'undefined') {
+          showError('sample-jobs.js not loaded');
+          return;
+        }
+
+        const jobs = sampleJobsDataset.map((j, idx) => ({
+          id: 'j' + Date.now() + idx,
+          title: j.title,
+          company: j.company,
+          category: j.category,
+          location: j.location,
+          type: j.type || 'Full-time',
+          salary: j.salary || 'Competitive',
+          experience: j.experience || 'Entry level',
+          description: j.description,
+          skills: j.skills,
+          applyLink: j.applyLink,
+          featured: j.featured || false,
+          status: 'approved',
+          postedBy: null,
+          createdAt: new Date().toISOString(),
+          views: 0,
+          applications: 0
+        }));
+
+        const existing = getJobs();
+        const merged = [...existing, ...jobs];
+        saveJobs(merged);
+
+        log(`✅ Loaded ${jobs.length} jobs from sample-jobs.js`);
+        showSuccess(`Loaded ${jobs.length} jobs from database!`);
+        updateStats();
+        updatePreview();
+      } catch (e) {
+        log(`❌ Error: ${e.message}`);
+        showError('Error loading sample dataset');
+      }
+    }
+
+    function downloadTemplate() {
+      const csv = `title,company,category,location,type,salary,experience,description,skills,applyLink
+Senior Developer,Company Name,IT & Software,City/Remote,Full-time,$100k-$150k,3+ years,Job description here,Skill1,Skill2,Skill3,https://apply.com
+Marketing Manager,Company Name,Marketing & Sales,City,Full-time,$60k-$90k,2+ years,Marketing job description,Marketing,SEO,Analytics,https://apply.com`;
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'jobs-template.csv';
+      a.click();
+      log('✅ Downloaded CSV template');
+    }
+
+    function clearAllJobs() {
+      if (!confirm('Delete all jobs? This cannot be undone!')) return;
+      saveJobs([]);
+      log('🗑️ Cleared all jobs');
+      showSuccess('All jobs cleared');
+      updateStats();
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const jobs = getJobs();
+      const limit = document.getElementById('previewLimit').value;
+      const display = limit === 'all' ? jobs : jobs.slice(0, parseInt(limit));
+
+      const tbody = document.getElementById('previewBody');
+      if (display.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">No jobs to display</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = display.map(j => `
+        <tr>
+          <td><strong>${escapeHtml((j.title || '').substring(0, 30))}</strong></td>
+          <td>${escapeHtml((j.company || '').substring(0, 20))}</td>
+          <td><span style="background: #e8f5e9; padding: 4px 8px; border-radius: 4px; color: #2e7d32; font-size: 0.85rem;">${escapeHtml(j.category)}</span></td>
+          <td>${escapeHtml(j.location || 'Remote')}</td>
+          <td>${escapeHtml(j.experience || '-')}</td>
+          <td>${escapeHtml(j.type || 'Full-time')}</td>
+        </tr>
+      `).join('');
+    }
+
+    function updateStats() {
+      const jobs = getJobs();
+      document.getElementById('totalJobs').textContent = jobs.length;
+      document.getElementById('totalCompanies').textContent = new Set(jobs.map(j => j.company)).size;
+      document.getElementById('totalCategories').textContent = new Set(jobs.map(j => j.category)).size;
+      document.getElementById('totalLocations').textContent = new Set(jobs.map(j => j.location)).size;
+      updatePreview();
+    }
+
+    function showSuccess(msg) {
+      showNotification(msg, 'success');
+    }
+
+    function showError(msg) {
+      showNotification(msg, 'error');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+  </script>
+</body>
+</html>

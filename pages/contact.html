@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Contact Us - Job Spare</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body { background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #e3f2fd 100%); font-family: 'Poppins', sans-serif; }
+    .contact-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+    .contact-header { text-align: center; margin-bottom: 40px; }
+    .contact-header h1 { color: #143; font-size: 2rem; margin: 0 0 12px 0; }
+    .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .contact-form { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .contact-form h2 { margin-top: 0; color: #2e7d32; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: 600; color: #333; margin-bottom: 6px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-family: 'Poppins', sans-serif; font-size: 0.95rem; transition: all 0.2s; box-sizing: border-box; }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #2e7d32; box-shadow: 0 0 8px rgba(46,125,50,0.1); }
+    .btn { background: linear-gradient(90deg, #2e7d32, #66bb6a); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(46,125,50,0.2); }
+    .contact-info { display: grid; gap: 24px; }
+    .info-card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .info-card h3 { margin-top: 0; color: #2e7d32; }
+    .info-card p { color: #666; line-height: 1.6; margin: 8px 0; }
+    .info-card a { color: #2e7d32; text-decoration: none; font-weight: 600; }
+    .info-card a:hover { text-decoration: underline; }
+    @media (max-width: 768px) { .contact-wrap { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container wrap">
+      <a class="brand" href="/index.html">
+        <div class="logo">JS</div>
+        <div><strong>Job Spare</strong></div>
+      </a>
+      <nav class="nav">
+        <a href="/index.html">Home</a>
+        <a href="/pages/jobs.html">All Jobs</a>
+        <a href="/pages/categories.html">Categories</a>
+        <a href="/pages/login.html">Login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="contact-container">
+    <div class="contact-header">
+      <h1>📧 Contact Us</h1>
+      <p>Have questions or feedback? We'd love to hear from you!</p>
+    </div>
+
+    <div class="contact-wrap">
+      <form id="contactForm" class="contact-form">
+        <h2>Send us a Message</h2>
+        
+        <div class="form-group">
+          <label for="contactName">Full Name</label>
+          <input type="text" id="contactName" placeholder="Your name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="contactEmail">Email</label>
+          <input type="email" id="contactEmail" placeholder="your@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="contactSubject">Subject</label>
+          <input type="text" id="contactSubject" placeholder="Message subject" required>
+        </div>
+
+        <div class="form-group">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" placeholder="Your message..." rows="6" required></textarea>
+        </div>
+
+        <button type="submit" class="btn">Send Message</button>
+      </form>
+
+      <div class="contact-info">
+        <div class="info-card">
+          <h3>📍 Address</h3>
+          <p>Job Spare Headquarters<br>123 Tech Street<br>Silicon Valley, CA 94025</p>
+        </div>
+
+        <div class="info-card">
+          <h3>📞 Phone</h3>
+          <p><a href="tel:+15551234567">+1 (555) 123-4567</a></p>
+          <p>Available Mon-Fri, 9 AM - 5 PM PST</p>
+        </div>
+
+        <div class="info-card">
+          <h3>✉️ Email</h3>
+          <p><a href="mailto:support@jobspare.com">support@jobspare.com</a></p>
+          <p>We typically respond within 24 hours</p>
+        </div>
+
+        <div class="info-card">
+          <h3>🕐 Business Hours</h3>
+          <p>Monday - Friday: 9 AM - 5 PM PST<br>
+          Saturday: 10 AM - 3 PM PST<br>
+          Sunday: Closed</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">© Job Spare • Find Your Perfect Fit</footer>
+
+  <script src="../app.js"></script>
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('contactName').value;
+      const email = document.getElementById('contactEmail').value;
+      const subject = document.getElementById('contactSubject').value;
+      const message = document.getElementById('contactMessage').value;
+
+      if (!name || !email || !subject || !message) {
+        showNotification('Please fill in all fields', 'warning');
+        return;
+      }
+
+      // In production, send to backend
+      console.log('Contact submission:', { name, email, subject, message });
+      showNotification(`✅ Thank you, ${name}! We'll be in touch soon.`, 'success');
+      document.getElementById('contactForm').reset();
+    });
+  </script>
+</body>
+</html>

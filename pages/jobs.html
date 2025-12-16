@@ -1,0 +1,227 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Browse Jobs - Job Sphere</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    body { background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #e3f2fd 100%); font-family: 'Poppins', sans-serif; }
+    .jobs-header { background: linear-gradient(90deg, #1b5e20, #2e7d32); color: white; padding: 20px; margin-bottom: 20px; }
+    .filter-section { background: white; padding: 16px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .filter-row input, .filter-row select { padding: 10px 12px; border-radius: 8px; border: 1px solid #ddd; font-size: 0.95rem; }
+    .job-listing { background: white; padding: 16px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-left: 4px solid #2e7d32; transition: all 0.3s ease; }
+    .job-listing:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    .job-listing h3 { margin: 0 0 6px 0; color: #143; }
+    .job-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.9rem; color: #666; margin: 8px 0; }
+    .job-meta span { display: flex; align-items: center; gap: 4px; }
+    .job-desc { color: #555; line-height: 1.5; margin: 10px 0; }
+    .job-actions { display: flex; gap: 10px; margin-top: 12px; }
+    .job-actions a { padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.2s ease; }
+    .job-actions .view { background: #f0f0f0; color: #333; }
+    .job-actions .apply { background: linear-gradient(90deg, #2e7d32, #66bb6a); color: white; }
+    .job-actions a:hover { transform: translateY(-2px); }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; background: #e8f5e9; color: #2e7d32; margin: 4px 4px 0 0; }
+    .empty-state { text-align: center; padding: 40px 20px; color: #666; }
+    @media (max-width: 768px) { .job-meta { flex-direction: column; } .filter-row { flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container wrap">
+      <a class="brand" href="/index.html">
+        <div class="logo">JS</div>
+        <div><strong>Job Sphere</strong></div>
+      </a>
+      <nav class="nav">
+        <a href="/index.html">Home</a>
+        <a href="/pages/jobs.html">All Jobs</a>
+        <a href="/pages/categories.html">Categories</a>
+        <a href="/pages/contact.html">Contact</a>
+        <a href="/pages/login.html">Login</a>
+        <a href="/pages/signup.html" class="cta">Sign Up</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="jobs-header">
+      <h1>Browse All Jobs</h1>
+      <p>Find your next opportunity from thousands of available positions</p>
+    </div>
+
+    <div class="filter-section">
+      <h3 style="margin-top: 0;">🔍 Filter & Search</h3>
+      <div class="filter-row">
+        <input id="searchInput" type="text" placeholder="Search by title, company..." style="flex: 1; min-width: 200px;">
+        <select id="categoryFilter" style="min-width: 180px;">
+          <option value="">All Categories</option>
+        </select>
+        <select id="locationFilter" style="min-width: 150px;">
+          <option value="">All Locations</option>
+        </select>
+      </div>
+      <div class="filter-row">
+        <button id="applyFilters" class="btn" onclick="filterJobs()">Apply Filters</button>
+        <button id="clearFilters" class="btn" style="background: #f0f0f0; color: #333;" onclick="clearFiltersUI()">Clear</button>
+      </div>
+    </div>
+
+    <div id="jobsList">
+      <div class="empty-state">Loading jobs...</div>
+    </div>
+  </main>
+
+  <footer class="footer">© Job Sphere • Find Your Perfect Fit</footer>
+
+  <script src="/db.js"></script>
+  <script src="../app.js"></script>
+  <script>
+    // Initialize jobs page
+    document.addEventListener('DOMContentLoaded', () => {
+      populateCategoryFilter();
+      populateLocationFilter();
+      renderAllJobs();
+      
+      // Add Enter key listener to search input
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') filterJobs();
+        });
+      }
+      
+      // Get category from URL query param
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('category');
+      if (cat) {
+        document.getElementById('categoryFilter').value = cat;
+        filterJobs();
+      }
+    });
+
+    function populateCategoryFilter() {
+      try {
+        const categories = (typeof DBModule !== 'undefined' && DBModule.getCategories) ? DBModule.getCategories() : [];
+        const select = document.getElementById('categoryFilter');
+        categories.forEach(cat => {
+          const opt = document.createElement('option');
+          opt.value = cat;
+          opt.textContent = cat;
+          select.appendChild(opt);
+        });
+      } catch (e) { console.warn('Could not populate categories:', e); }
+    }
+
+    function populateLocationFilter() {
+      try {
+        const jobs = (typeof DBModule !== 'undefined' && DBModule.getJobs) ? DBModule.getJobs() : [];
+        const locations = Array.from(new Set(jobs.map(j => j.location || '').filter(x => x && x.trim())));
+        const select = document.getElementById('locationFilter');
+        locations.sort().forEach(loc => {
+          const opt = document.createElement('option');
+          opt.value = loc;
+          opt.textContent = loc;
+          select.appendChild(opt);
+        });
+      } catch (e) { console.warn('Could not populate locations:', e); }
+    }
+
+    function renderAllJobs() {
+      try {
+        const jobs = (typeof DBModule !== 'undefined' && DBModule.getJobs) ? DBModule.getJobs() : [];
+        const approved = jobs.filter(j => j.status === 'approved' || !j.status);
+        const container = document.getElementById('jobsList');
+        
+        if (!approved.length) {
+          container.innerHTML = '<div class="empty-state">No jobs available at this time.</div>';
+          return;
+        }
+
+        container.innerHTML = approved.map(job => `
+          <div class="job-listing">
+            <h3>${escapeHtml(job.title || 'Untitled')}</h3>
+            <div class="job-meta">
+              <span>🏢 ${escapeHtml(job.company || 'Company')}</span>
+              <span>📍 ${escapeHtml(job.location || 'Remote')}</span>
+              <span>🏷️ ${escapeHtml(job.category || 'General')}</span>
+            </div>
+            <div style="margin: 8px 0;">
+              ${job.salary ? `<span class="badge">💰 ${escapeHtml(job.salary)}</span>` : ''}
+              ${job.type ? `<span class="badge">${escapeHtml(job.type)}</span>` : ''}
+              ${job.featured ? `<span class="badge">⭐ Featured</span>` : ''}
+            </div>
+            <div class="job-desc">${escapeHtml((job.description || '').substring(0, 200))}...</div>
+            <div class="job-actions">
+              <a href="/pages/job-details.html?id=${job.id}" class="view">View Details</a>
+              <a href="${escapeAttr(job.applyLink || '#')}" class="apply" target="_blank">Apply Now</a>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Error rendering jobs:', e);
+        document.getElementById('jobsList').innerHTML = '<div class="empty-state">Error loading jobs.</div>';
+      }
+    }
+
+    function filterJobs() {
+      try {
+        const search = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+        const category = (document.getElementById('categoryFilter').value || '').trim();
+        const location = (document.getElementById('locationFilter').value || '').trim();
+        
+        const jobs = (typeof DBModule !== 'undefined' && DBModule.getJobs) ? DBModule.getJobs() : [];
+        const filtered = jobs.filter(job => {
+          const matchStatus = job.status === 'approved' || !job.status;
+          const jobTitle = (job.title || '').toLowerCase();
+          const jobCompany = (job.company || '').toLowerCase();
+          const jobDesc = (job.description || '').toLowerCase();
+          const matchSearch = !search || jobTitle.includes(search) || jobCompany.includes(search) || jobDesc.includes(search);
+          const matchCategory = !category || ((job.category || '').trim() === category);
+          const matchLocation = !location || ((job.location || '').trim() === location);
+          return matchStatus && matchSearch && matchCategory && matchLocation;
+        });
+
+        const container = document.getElementById('jobsList');
+        if (!filtered.length) {
+          container.innerHTML = '<div class="empty-state">No jobs match your filters.</div>';
+          return;
+        }
+
+        container.innerHTML = filtered.map(job => `
+          <div class="job-listing">
+            <h3>${escapeHtml(job.title || 'Untitled')}</h3>
+            <div class="job-meta">
+              <span>🏢 ${escapeHtml(job.company || 'Company')}</span>
+              <span>📍 ${escapeHtml(job.location || 'Remote')}</span>
+              <span>🏷️ ${escapeHtml(job.category || 'General')}</span>
+            </div>
+            <div style="margin: 8px 0;">
+              ${job.salary ? `<span class="badge">💰 ${escapeHtml(job.salary)}</span>` : ''}
+              ${job.type ? `<span class="badge">${escapeHtml(job.type)}</span>` : ''}
+              ${job.featured ? `<span class="badge">⭐ Featured</span>` : ''}
+            </div>
+            <div class="job-desc">${escapeHtml((job.description || '').substring(0, 200))}...</div>
+            <div class="job-actions">
+              <a href="/pages/job-details.html?id=${job.id}" class="view">View Details</a>
+              <a href="${escapeAttr(job.applyLink || '#')}" class="apply" target="_blank">Apply Now</a>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Filter error:', e);
+        renderAllJobs();
+      }
+    }
+
+    function clearFiltersUI() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('categoryFilter').value = '';
+      document.getElementById('locationFilter').value = '';
+      renderAllJobs();
+    }
+  </script>
+</body>
+</html>

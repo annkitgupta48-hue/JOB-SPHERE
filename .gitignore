@@ -1,0 +1,83 @@
+# ===== LaTeX/Beamer Temporary Files =====
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.bbl
+*.blg
+*.dvi
+*.ps
+texput.log
+
+# ===== Node.js / Backend =====
+node_modules/
+package-lock.json
+npm-debug.log
+yarn-error.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===== IDE & Editor Files =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-project
+*.sublime-workspace
+
+# ===== OS Files =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini
+
+# ===== Build & Dist =====
+dist/
+build/
+.cache/
+
+# ===== Database & Sensitive Files =====
+*.db
+*.sqlite
+*.sqlite3
+.mongodb/
+.env.template (keep this, but not actual .env)
+
+# ===== Temporary/Testing Files =====
+*.tmp
+temp/
+test-output/
+.test-results/
+
+# ===== OS-specific =====
+# Windows
+*.exe
+*.bat (keep important ones like COMPILE_PRESENTATION.bat)
+Thumbs.db
+
+# macOS
+.AppleDouble
+.LSOverride
+.TemporaryItems
+
+# ===== Specific Excludes for JobSphere =====
+# Keep all markdown documentation files
+# Keep all HTML pages
+# Keep all CSS and JS files
+# Keep all JSON configs (except secrets)
+# Exclude only generated/temporary files

@@ -1,0 +1,755 @@
+\documentclass[handout,aspectratio=16:9,dvipsnames]{beamer}
+
+% ===== THEME & COLOR SETUP =====
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamercolor{primary}{bg=white,fg=black}
+\setbeamertemplate{navigation symbols}{}
+
+% Define custom colors
+\definecolor{JobSphereGreen}{RGB}{46, 125, 50}
+\definecolor{LightGreen}{RGB}{232, 245, 233}
+\definecolor{DarkGreen}{RGB}{27, 94, 32}
+
+% ===== PACKAGES =====
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fancybox}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Disable overlay specifications in handout mode (ignore <n-> etc.)
+\beamerdefaultoverlayspecification{}
+\setbeamercovered{transparent}
+
+% ===== CODE LISTING SETUP =====
+\lstset{
+    language=JavaScript,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    breaklines=true,
+    showstringspaces=false,
+    tabsize=2,
+    backgroundcolor=\color{LightGreen}
+}
+
+% ===== TITLE & AUTHOR =====
+\title[JobSphere]{\textbf{JobSphere}}
+\subtitle{A Modern Job Portal Platform}
+\author{Ankit}
+\date{\today}
+\institute{Job Portal Initiative}
+
+% ===== CUSTOM FOOTLINE =====
+\setbeamertemplate{footline}{
+    \hbox{%
+        \begin{beamercolorbox}[wd=0.3\paperwidth,ht=2.25ex,dp=1ex,left]{author in head/foot}%
+            \usebeamerfont{author in head/foot}\hspace{0.5em}JobSphere
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=0.4\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+            \usebeamerfont{title in head/foot}\insertshorttitle
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=0.3\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\insertshortdate{}\hspace{0.5em}\insertframenumber{}/\inserttotalframenumber
+        \end{beamercolorbox}}%
+    \vskip0pt%
+}
+
+% ===== TITLE PAGE STYLE =====
+\setbeamertemplate{title page}{
+    \begin{centering}
+        \vspace{2cm}
+        {\usebeamerfont{title}\usebeamercolor[fg]{title}\Large\textbf{\inserttitle}\par}
+        \vspace{0.5cm}
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+        \vspace{1.5cm}
+        {\usebeamerfont{author}\insertauthor\par}
+        \vspace{0.5cm}
+        {\usebeamerfont{institute}\insertinstitute\par}
+        \vspace{0.5cm}
+        {\usebeamerfont{date}\insertdate\par}
+    \end{centering}
+}
+
+% ===== SECTION TITLE TEMPLATE =====
+\AtBeginSection[]{
+    \begin{frame}
+        \vfill
+        \centering
+        \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+            \usebeamerfont{title}\usebeamercolor[fg]{title}\insertsectionhead\par%
+        \end{beamercolorbox}
+        \vfill
+    \end{frame}
+}
+
+% ===== DOCUMENT BEGINS =====
+\begin{document}
+
+% ===== SLIDE 1: TITLE SLIDE =====
+\frame{\titlepage}
+
+% ===== SLIDE 2: TABLE OF CONTENTS =====
+\begin{frame}
+    \frametitle{Agenda}
+    	ableofcontents
+\end{frame}
+
+% ===== SECTION 1: PROJECT OVERVIEW =====
+\section{Project Overview}
+
+\begin{frame}
+    \frametitle{What is JobSphere?}
+    \begin{itemize}
+        \item \textbf{A comprehensive job portal platform} for job seekers and employers
+        \item \textbf{Aggregates multiple job categories:}
+        \begin{itemize}
+            \item Government sector jobs
+            \item Private sector jobs
+            \item Software engineering roles
+            \item Off-campus opportunities
+            \item Internship programs
+        \end{itemize}
+        \item<3-> \textbf{Built with:} Vanilla JavaScript, HTML5, CSS3 (frontend)
+        \item<4-> \textbf{Optional:} Node.js + MongoDB (backend for production)
+        \item<5-> \textbf{Status:} Production-ready with full admin dashboard
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Project Objective}
+    \begin{center}
+        \Large \textcolor{JobSphereGreen}{\textbf{To provide a unified platform where:}}
+    \end{center}
+    \vspace{0.5cm}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Job Seekers}
+        \begin{itemize}
+            \item Browse diverse job listings
+            \item Filter by category, location
+            \item Apply directly to opportunities
+            \item Post resumes/profiles
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Employers}
+        \begin{itemize}
+            \item Post job openings
+            \item Reach qualified candidates
+            \item Manage applications
+            \item Admin approval workflow
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% ===== SECTION 2: KEY FEATURES =====
+\section{Key Features}
+
+\begin{frame}
+    \frametitle{Core Features}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{For Job Seekers:}
+        \begin{itemize}
+            \item Advanced search & filtering
+            \item Job categorization
+            \item Apply with one click
+            \item Save drafts
+            \item View job details
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \textbf{For Employers:}
+        \begin{itemize}
+            \item Post jobs easily
+            \item Auto-approval for admins
+            \item Pending approval for users
+            \item Manage all listings
+            \item Edit apply links
+        \end{itemize}
+    \end{columns}
+    \vspace{0.5cm}
+    \begin{center}
+        \textbf{Global Features:}
+        \begin{itemize}
+            \item Google OAuth 2.0 authentication
+            \item Real-time notifications
+            \item Responsive design
+            \item localStorage persistence
+        \end{itemize}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Admin Dashboard}
+    \begin{center}
+        \textcolor{DarkGreen}{\textbf{Powerful Admin Control Panel}}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item<1-> \textbf{Job Management:} Approve/reject pending submissions
+        \item<2-> \textbf{Category Management:} Add/delete job categories
+        \item<3-> \textbf{Link Management:} Edit apply links for all jobs
+        \item<4-> \textbf{Statistics Dashboard:} Real-time metrics
+        \begin{itemize}
+            \item Total jobs posted
+            \item Pending approvals
+            \item Registered users
+            \item Active categories
+        \end{itemize}
+        \item<5-> \textbf{Data Import:} Import jobs from CSV/JSON
+        \item<6-> \textbf{User Management:} View and manage user accounts
+    \end{itemize}
+\end{frame}
+
+% ===== SECTION 3: TECHNOLOGY STACK =====
+\section{Technology Stack}
+
+\begin{frame}
+    \frametitle{Frontend Stack}
+    \begin{center}
+        \Large \textcolor{JobSphereGreen}{\textbf{Client-Side Technologies}}
+    \end{center}
+    \vspace{0.5cm}
+    \begin{columns}
+        \column{0.3\textwidth}
+        \centering
+        \textbf{HTML5}
+        \begin{itemize}
+            \item Semantic markup
+            \item Form handling
+            \item Modern structure
+        \end{itemize}
+        
+        \column{0.3\textwidth}
+        \centering
+        \textbf{CSS3}
+        \begin{itemize}
+            \item Flexbox layouts
+            \item Grid system
+            \item Animations
+            \item Responsive design
+        \end{itemize}
+        
+        \column{0.3\textwidth}
+        \centering
+        \textbf{JavaScript}
+        \begin{itemize}
+            \item DOM manipulation
+            \item Event handling
+            \item Data persistence
+            \item No build tools
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Backend Architecture}
+    \begin{center}
+        \Large \textcolor{JobSphereGreen}{\textbf{Production-Ready Backend}}
+    \end{center}
+    \vspace{0.5cm}
+    
+    \textbf{Current:} localStorage (Single device, single user)
+    \vspace{0.3cm}
+    
+    \textbf{Production:} MongoDB + Express.js
+    \begin{itemize}
+        \item REST API endpoints (\texttt{/api/jobs}, \texttt{/api/users}, \texttt{/api/categories})
+        \item JWT authentication
+        \item bcrypt password hashing
+        \item CORS enabled
+        \item Cloud-ready (Heroku/Vercel deployment)
+    \end{itemize}
+    \vspace{0.3cm}
+    
+    \textbf{Database:} MongoDB
+    \begin{itemize}
+        \item Jobs collection
+        \item Users collection
+        \item Categories collection
+    \end{itemize}
+\end{frame}
+
+% ===== SECTION 4: SYSTEM ARCHITECTURE =====
+\section{System Architecture}
+
+\begin{frame}
+    \frametitle{Architecture Overview}
+    \begin{center}
+        \textbf{Three-Layer Architecture}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{columns}
+        \column{0.33\textwidth}
+        \centering
+        \textbf{Presentation Layer}
+        \begin{itemize}
+            \item HTML Pages
+            \item CSS Styling
+            \item Client-side logic
+            \item User Interface
+        \end{itemize}
+        
+        \column{0.33\textwidth}
+        \centering
+        \textbf{Logic Layer}
+        \begin{itemize}
+            \item app.js (1000+ LOC)
+            \item Form handlers
+            \item Business logic
+            \item Authentication
+        \end{itemize}
+        
+        \column{0.33\textwidth}
+        \centering
+        \textbf{Data Layer}
+        \begin{itemize}
+            \item db.js abstraction
+            \item localStorage
+            \item MongoDB API
+            \item Data persistence
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Data Flow}
+    \begin{center}
+        \textbf{How Data Moves Through the System}
+    \end{center}
+    \vspace{0.5cm}
+    \begin{enumerate}
+        \item<1-> User interacts with UI (clicks button, fills form)
+        \item<2-> Event handler triggers (JavaScript function)
+        \item<3-> Form validation occurs
+        \item<4-> Data is processed by business logic
+        \item<5-> Data is persisted via db.js abstraction layer
+        \item<6-> Data stored in localStorage OR sent to MongoDB API
+        \item<7-> UI re-renders with updated data
+        \item<8-> User sees confirmation (notification)
+    \end{enumerate}
+\end{frame}
+
+% ===== SECTION 5: DATA MODELS =====
+\section{Data Models}
+
+\begin{frame}[fragile]
+    \frametitle{Users Schema}
+    \begin{lstlisting}
+{
+  id: "u1702812345999",
+  email: "user@example.com",
+  password: "hashed_password",
+  name: "John Doe",
+  role: "user" | "admin",
+  createdAt: "2025-12-16T10:30:00Z"
+}
+    \end{lstlisting}
+    \vspace{0.3cm}
+    \textbf{Roles:}
+    \begin{itemize}
+        \item \texttt{user}: Regular job seeker/employer
+        \item \texttt{admin}: System administrator with full access
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Jobs Schema}
+    \begin{lstlisting}
+{
+  id: "j1702812345999",
+  title: "Senior Developer",
+  company: "Tech Corp",
+  category: "IT & Software",
+  location: "Bengaluru",
+  description: "Looking for...",
+  applyLink: "https://...",
+  status: "approved" | "pending",
+  postedBy: "u1702812345999",
+  createdAt: "2025-12-16T10:30:00Z",
+  views: 150,
+  applications: 23
+}
+    \end{lstlisting}
+    \vspace{0.3cm}
+    \textbf{Status Logic:}
+    \begin{itemize}
+        \item Admin posts: \textcolor{JobSphereGreen}{\textbf{approved}} (auto-published)
+        \item User posts: \textcolor{orange}{\textbf{pending}} (awaits admin review)
+    \end{itemize}
+\end{frame}
+
+% ===== SECTION 6: JOB APPROVAL WORKFLOW =====
+\section{Job Approval Workflow}
+
+\begin{frame}
+    \frametitle{Workflow: User Posts Job}
+    \centering
+    \begin{enumerate}
+        \item User fills job form: title, company, category, description, apply link
+        \item Clicks \textbf{``Publish''} button
+        \item System creates job with \textcolor{orange}{\textbf{status = 'pending'}}
+        \item Job saved to storage
+        \item Admin receives notification
+        \item Admin reviews job in \textbf{Pending} tab
+        \item Admin clicks \textbf{``Approve''} or \textbf{``Reject''}
+        \item If approved: status becomes \textcolor{JobSphereGreen}{\textbf{approved}}
+        \item Job appears in public listings
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Workflow: Admin Posts Job}
+    \centering
+    \begin{enumerate}
+        \item Admin logs in to \textbf{Admin Dashboard}
+        \item Goes to \textbf{``Post Job''} tab
+        \item Fills job details: title, company, category, location, description, link
+        \item Clicks \textbf{``Post Job (Auto-Approved)''}
+        \item System creates job with \textcolor{JobSphereGreen}{\textbf{status = 'approved'}}
+        \item Job IMMEDIATELY appears in public listings
+        \item NO waiting period
+        \item Users can apply instantly
+    \end{enumerate}
+\end{frame}
+
+% ===== SECTION 7: AUTHENTICATION =====
+\section{Authentication}
+
+\begin{frame}
+    \frametitle{Three Authentication Methods}
+    \begin{center}
+        \Large \textcolor{JobSphereGreen}{\textbf{Login Options}}
+    \end{center}
+    \vspace{0.5cm}
+    
+    \begin{itemize}
+        \item \textbf{Email/Password (User Login)}
+        \begin{itemize}
+            \item Regular signup and login
+            \item Redirect to user dashboard
+        \end{itemize}
+        
+        \item \textbf{Admin Login}
+        \begin{itemize}
+            \item Special admin account
+            \item Email: \texttt{admin@jobspare.com}
+            \item Password: \texttt{admin123}
+            \item Redirect to admin dashboard
+        \end{itemize}
+        
+        \item \textbf{Google OAuth 2.0}
+        \begin{itemize}
+            \item Single sign-on integration
+            \item Auto-creates user account
+            \item JWT token handling
+        \end{itemize}
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{Session Management:} sessionStorage (cleared on logout)
+\end{frame}
+
+% ===== SECTION 8: FILE STRUCTURE =====
+\section{Project Structure}
+
+\begin{frame}
+    \frametitle{Project File Organization}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Root Level Files}
+        \begin{itemize}
+            \item \texttt{index.html} - Homepage
+            \item \texttt{app.js} - Core logic
+            \item \texttt{db.js} - Data layer
+            \item \texttt{style.css} - Global styles
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Pages Folder}
+        \begin{itemize}
+            \item \texttt{login.html}
+            \item \texttt{signup.html}
+            \item \texttt{jobs.html}
+            \item \texttt{job-details.html}
+            \item \texttt{admin-dashboard.html}
+            \item \texttt{post-job.html}
+            \item \texttt{user-dashboard.html}
+        \end{itemize}
+    \end{columns}
+    \vspace{0.5cm}
+    \begin{center}
+        \textbf{Backend (Production)}
+        \begin{itemize}
+            \item \texttt{backend/server.js} - Express API
+            \item \texttt{backend/package.json} - Dependencies
+        \end{itemize}
+    \end{center}
+\end{frame}
+
+% ===== SECTION 9: FEATURES IN DETAIL =====
+\section{Detailed Features}
+
+\begin{frame}
+    \frametitle{Search \& Filtering}
+    \begin{center}
+        \textbf{Finding the Right Job}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Search by keyword:} Title, company, description
+        \item \textbf{Filter by category:}
+        \begin{itemize}
+            \item Government
+            \item Private
+            \item IT \& Software
+            \item Internship
+            \item Off-Campus
+            \item Custom categories (admin-added)
+        \end{itemize}
+        \item \textbf{Real-time results} as user types
+        \item \textbf{Pagination} for large result sets
+        \item \textbf{Sort by} date posted, relevance
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Draft System}
+    \begin{center}
+        \textbf{Save Progress While Posting Jobs}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Auto-save:} Every 30 seconds
+        \item \textbf{Manual save:} Click ``Save Draft''
+        \item \textbf{Edit later:} Resume from drafts page
+        \item \textbf{Publish from draft:} Convert to live job posting
+        \item \textbf{Delete draft:} Remove unwanted drafts
+        \item \textbf{Local storage only:} No server dependency
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Notification System}
+    \begin{center}
+        \textbf{Real-Time User Feedback}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item \textbf{Success:} \textcolor{green}{\textbf{Job posted}} (green notification)
+        \item \textbf{Error:} \textcolor{red}{\textbf{Invalid email}} (red notification)
+        \item \textbf{Warning:} \textcolor{orange}{\textbf{Fill required fields}} (yellow notification)
+        \item \textbf{Info:} \textcolor{blue}{\textbf{Job approved}} (blue notification)
+    \end{itemize}
+    \vspace{0.3cm}
+    \textbf{Properties:}
+    \begin{itemize}
+        \item Fixed top-right corner
+        \item Auto-dismisses after 3 seconds
+        \item Smooth animations
+        \item Non-blocking interaction
+    \end{itemize}
+\end{frame}
+
+% ===== SECTION 10: PRODUCTION DEPLOYMENT =====
+\section{Production Deployment}
+
+\begin{frame}
+    \frametitle{From Development to Production}
+    \begin{center}
+        \textbf{Migration Path: localStorage → MongoDB}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{enumerate}
+        \item \textbf{Step 1:} Set up MongoDB cluster on MongoDB Atlas
+        \item \textbf{Step 2:} Deploy backend (Node.js + Express) to Heroku/Vercel
+        \item \textbf{Step 3:} Configure environment variables
+        \begin{itemize}
+            \item \texttt{MONGODB\_URI}
+            \item \texttt{JWT\_SECRET}
+        \end{itemize}
+        \item \textbf{Step 4:} Enable MongoDB in frontend: set \texttt{DB\_CONFIG.USE\_MONGODB = true}
+        \item \textbf{Step 5:} Test API endpoints
+        \item \textbf{Step 6:} Deploy frontend to Netlify
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Security Considerations}
+    \begin{center}
+        \textbf{Before Production Deployment}
+    \end{center}
+    \vspace{0.3cm}
+    \begin{itemize}
+        \item<1-> \textbf{Password hashing:} Implement bcrypt (backend ready)
+        \item<2-> \textbf{JWT tokens:} Auto-generated with 7-day expiry
+        \item<3-> \textbf{CORS:} Configured for production domains
+        \item<4-> \textbf{Rate limiting:} Prevent spam submissions
+        \item<5-> \textbf{Email verification:} Optional for user accounts
+        \item<6-> \textbf{HTTPS:} Required for production
+        \item<7-> \textbf{Environment variables:} Never hardcode secrets
+        \item<8-> \textbf{Input validation:} Server-side checks
+    \end{itemize}
+\end{frame}
+
+% ===== SECTION 11: USAGE GUIDE =====
+\section{Quick Start Guide}
+
+\begin{frame}
+    \frametitle{Getting Started (5 Minutes)}
+    \centering
+    \begin{enumerate}
+        \item<1-> Navigate to \texttt{c:\textbackslash Users\textbackslash Ankit\textbackslash Desktop\textbackslash JobSphere}
+        
+        \item<2-> Open \texttt{index.html} in your browser
+        \begin{itemize}
+            \item Option 1: Double-click \texttt{index.html}
+            \item Option 2: Right-click → ``Open with Live Server''
+        \end{itemize}
+        
+        \item<3-> Browse the homepage
+        
+        \item<4-> \textbf{Create user account:} Click ``Sign Up''
+        
+        \item<5-> \textbf{Test as admin:}
+        \begin{itemize}
+            \item Email: \texttt{admin@jobspare.com}
+            \item Password: \texttt{admin123}
+        \end{itemize}
+        
+        \item<6-> Post a job and test approval workflow
+    \end{enumerate}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Core Workflows}
+    \centering
+    \begin{columns}
+        \column{0.5\textwidth}
+        \textbf{For Job Seekers}
+        \begin{enumerate}
+            \item Sign up / Login
+            \item Browse jobs
+            \item Search/filter
+            \item View details
+            \item Click apply link
+        \end{enumerate}
+        
+        \column{0.5\textwidth}
+        \textbf{For Employers}
+        \begin{enumerate}
+            \item Post job form
+            \item Fill details
+            \item Click publish
+            \item Wait for approval (if user)
+            \item Job goes live
+        \end{enumerate}
+    \end{columns}
+    \vspace{0.5cm}
+    \textbf{For Admins}
+    \begin{enumerate}
+        \item Login to dashboard
+        \item Review pending jobs
+        \item Approve/reject
+        \item Manage categories
+        \item Edit apply links
+    \end{enumerate}
+\end{frame}
+
+% ===== SECTION 12: FUTURE ENHANCEMENTS =====
+\section{Future Enhancements}
+
+\begin{frame}
+    \frametitle{Roadmap: Next Steps}
+    \begin{itemize}
+        \item<1-> \textbf{Analytics:} Track views, applications, top jobs
+        \item<2-> \textbf{Email notifications:} When jobs match user preferences
+        \item<3-> \textbf{Saved jobs:} Bookmark feature for later viewing
+        \item<4-> \textbf{User profiles:} Resume uploads, skill endorsements
+        \item<5-> \textbf{Advanced filtering:} Salary range, experience level
+        \item<6-> \textbf{Mobile app:} React Native or Flutter
+        \item<7-> \textbf{AI recommendations:} Smart job matching
+        \item<8-> \textbf{Video interviews:} Integrated interview platform
+        \item<9-> \textbf{Payment integration:} Premium job postings
+        \item<10-> \textbf{Multi-language support:} Hindi, regional languages
+    \end{itemize}
+\end{frame}
+
+% ===== SECTION 13: METRICS & STATISTICS =====
+\section{Project Statistics}
+
+\begin{frame}
+    \frametitle{By The Numbers}
+    \begin{center}
+        \Large \textcolor{JobSphereGreen}{\textbf{JobSphere Project Scale}}
+    \end{center}
+    \vspace{0.5cm}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Code}
+        \begin{itemize}
+            \item \texttt{1,054} lines - app.js
+            \item \texttt{358} lines - db.js
+            \item \texttt{8+} HTML pages
+            \item \texttt{1,500+} lines CSS
+        \end{itemize}
+        
+        \column{0.5\textwidth}
+        \centering
+        \textbf{Features}
+        \begin{itemize}
+            \item \texttt{3} auth methods
+            \item \texttt{7+} categories
+            \item \texttt{100+} sample jobs
+            \item Admin dashboard
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% ===== SECTION 14: CONCLUSION =====
+\section{Conclusion}
+
+\begin{frame}
+    \frametitle{Summary}
+    \centering
+    \begin{itemize}
+        \item<1-> JobSphere is a \textbf{complete, production-ready job portal}
+        \item<2-> Built with \textbf{vanilla JavaScript} (no complex frameworks)
+        \item<3-> \textbf{Scalable} from localStorage to MongoDB
+        \item<4-> Strong \textbf{admin control} with approval workflows
+        \item<5-> \textbf{User-friendly} interface for all roles
+        \item<6-> \textbf{Ready for deployment} to production
+    \end{itemize}
+    \vspace{0.8cm}
+    \centering
+    \Huge \textcolor{JobSphereGreen}{\textbf{Let's Build the Future of Job Portals!}}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Thank You!}
+    \centering
+    \vspace{1.5cm}
+    \Huge \textbf{Questions?}
+    \vspace{1.5cm}
+    \large
+    \textbf{Project Repository:} c:\textbackslash Users\textbackslash Ankit\textbackslash Desktop\textbackslash JobSphere
+    \vspace{0.5cm}
+    
+    \textbf{Contact:} For more information about JobSphere
+    \vspace{1.5cm}
+    
+    \small \textcolor{gray}{JobSphere - Modern Job Portal Platform}
+\end{frame}
+
+\end{document}

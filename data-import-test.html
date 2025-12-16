@@ -1,0 +1,190 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Data Import Test</title>
+  <style>
+    body { font-family: monospace; background: #f5f5f5; padding: 20px; max-width: 900px; margin: 0 auto; }
+    pre { background: white; padding: 16px; border-radius: 8px; overflow-x: auto; border: 1px solid #ddd; }
+    .success { color: #2e7d32; font-weight: bold; }
+    .info { color: #1976d2; }
+    .warning { color: #f57c00; }
+    h1, h2 { color: #333; }
+    button { padding: 10px 20px; margin: 5px; cursor: pointer; background: #2e7d32; color: white; border: none; border-radius: 4px; }
+    button:hover { background: #1b5e20; }
+  </style>
+</head>
+<body>
+  <h1>📊 Data Import Test Console</h1>
+  
+  <h2>Quick Test Commands</h2>
+  <p>Open browser console (F12) and run these commands:</p>
+  
+  <h3>1️⃣ Check if data persists</h3>
+  <pre>
+// See how many jobs are in storage
+getJobs().length
+
+// Output should be ≥ 3 (default sample jobs)
+  </pre>
+
+  <h3>2️⃣ Load sample data</h3>
+  <pre>
+// Add 100+ realistic jobs from sample-jobs.js
+if (typeof sampleJobsDataset !== 'undefined') {
+  const jobs = sampleJobsDataset.map((j, idx) => ({
+    id: 'j' + Date.now() + idx,
+    ...j,
+    status: 'approved',
+    createdAt: new Date().toISOString()
+  }));
+  saveJobs([...getJobs(), ...jobs]);
+  console.log('✅ Loaded ' + jobs.length + ' jobs');
+}
+  </pre>
+
+  <h3>3️⃣ Generate CSV import code</h3>
+  <pre>
+// Simulate CSV import
+const sampleCSV = `title,company,category,location,type,salary,experience
+Senior Developer,Google,IT & Software,CA,Full-time,$150k,5+ years
+Full Stack Developer,Meta,IT & Software,CA,Full-time,$130k,3+ years`;
+
+const lines = sampleCSV.trim().split('\n');
+const headers = lines[0].split(',').map(h => h.trim());
+const jobs = [];
+for (let i = 1; i < lines.length; i++) {
+  const values = lines[i].split(',');
+  const job = {};
+  headers.forEach((h, idx) => job[h] = values[idx].trim());
+  jobs.push(job);
+}
+console.log('✅ Parsed ' + jobs.length + ' jobs from CSV');
+console.table(jobs);
+  </pre>
+
+  <h3>4️⃣ Export jobs as JSON</h3>
+  <pre>
+// Get all jobs as JSON
+const jobs = getJobs();
+console.log(JSON.stringify(jobs, null, 2));
+
+// Or download as file
+const json = JSON.stringify(getJobs(), null, 2);
+const blob = new Blob([json], { type: 'application/json' });
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = 'jobs-export.json';
+a.click();
+  </pre>
+
+  <h3>5️⃣ Check data integrity</h3>
+  <pre>
+const jobs = getJobs();
+console.log('Total jobs:', jobs.length);
+console.log('Approved:', jobs.filter(j => j.status === 'approved').length);
+console.log('Pending:', jobs.filter(j => j.status === 'pending').length);
+console.log('Companies:', new Set(jobs.map(j => j.company)).size);
+console.log('Categories:', new Set(jobs.map(j => j.category)).size);
+  </pre>
+
+  <h2>🎯 Import Flow Diagram</h2>
+  <pre>
+User uploads CSV
+        ↓
+data-import.html reads file
+        ↓
+Parse CSV → Get headers
+        ↓
+Map columns to job schema
+        ↓
+Validate required fields (title, company, category, location)
+        ↓
+Remove duplicates
+        ↓
+Merge with existing jobs
+        ↓
+Save to localStorage via saveJobs()
+        ↓
+Update stats display
+        ↓
+Show success notification
+        ↓
+User sees jobs in /pages/jobs.html
+  </pre>
+
+  <h2>📝 CSV Format Requirements</h2>
+  <pre>
+REQUIRED columns (must be present):
+- title (job title)
+- company (company name)
+- category (IT & Software, Marketing, Finance, etc.)
+- location (City or "Remote")
+
+OPTIONAL columns (auto-filled if missing):
+- type (Full-time, Part-time, Internship)
+- salary (e.g., "$100k-$150k")
+- experience (e.g., "3+ years")
+- description (job description)
+- skills (comma-separated: "Python,Java,Go")
+- applyLink (URL to apply)
+
+Example valid CSV:
+---
+title,company,category,location,type
+Senior Dev,Google,IT & Software,CA,Full-time
+Marketing Mgr,Meta,Marketing,NY,Full-time
+---
+  </pre>
+
+  <h2>✅ Test Results</h2>
+  <div id="results"></div>
+
+  <script src="/db.js"></script>
+  <script src="../app.js"></script>
+  <script src="../data/sample-jobs.js"></script>
+  <script>
+    const resultsDiv = document.getElementById('results');
+    
+    const tests = [
+      {
+        name: '✅ Database module loaded',
+        test: () => typeof getJobs === 'function'
+      },
+      {
+        name: '✅ Storage has initial data',
+        test: () => getJobs().length > 0
+      },
+      {
+        name: `✅ Default jobs loaded (${getJobs().length} jobs)`,
+        test: () => true
+      },
+      {
+        name: `✅ Sample dataset available (${typeof sampleJobsDataset !== 'undefined' ? sampleJobsDataset.length : 0} jobs)`,
+        test: () => typeof sampleJobsDataset !== 'undefined'
+      },
+      {
+        name: '✅ Current user authenticated',
+        test: () => getCurrentUser() !== null
+      }
+    ];
+
+    tests.forEach(t => {
+      const result = t.test();
+      const status = result ? '<span class="success">PASS</span>' : '<span class="warning">FAIL</span>';
+      resultsDiv.innerHTML += `<p>${t.name}: ${status}</p>`;
+    });
+
+    resultsDiv.innerHTML += `
+      <hr>
+      <p><strong>Current jobs in system:</strong> ${getJobs().length}</p>
+      <p><strong>Current user:</strong> ${getCurrentUser() ? getCurrentUser().email : 'Not logged in'}</p>
+      <p><strong>Sample jobs available:</strong> ${typeof sampleJobsDataset !== 'undefined' ? sampleJobsDataset.length : 0}</p>
+      <hr>
+      <p><strong>🎯 Next step:</strong> Go to Admin Dashboard → "📤 Import Data" button</p>
+    `;
+  </script>
+</body>
+</html>

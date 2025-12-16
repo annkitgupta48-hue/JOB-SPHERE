@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Job Details - Job Sphere</title>
+	<link rel="stylesheet" href="../style.css">
+	<style>
+		body { background: linear-gradient(180deg,#f6fff5 0%,#ecf8ee 100%); }
+		.detail-wrap { max-width: 980px; margin: 28px auto; padding: 24px; background: #fff; border-radius: 12px; box-shadow: 0 12px 40px rgba(46,125,50,0.08); }
+		.detail-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+		.job-title { font-size:1.6rem; color:#184d28; margin:0; }
+		.job-company { color:#2e7d32; font-weight:700; margin-top:6px }
+		.badges { display:flex; gap:8px; align-items:center; }
+		.badge { padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.85rem; background:#f0fff6; color:#2e7d32 }
+		.badge.urgent { background:#fff0f0; color:#c62828 }
+		.meta-row { margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; color:#666 }
+		.desc { margin-top:18px; line-height:1.7; color:#444 }
+		.skills { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap }
+		.skill { background:#e8f5e9; color:#2e7d32; padding:6px 10px; border-radius:18px; font-weight:600 }
+		.actions { margin-top:20px; display:flex; gap:12px; flex-wrap:wrap }
+		.btn { padding:12px 16px; border-radius:10px; border:none; cursor:pointer; font-weight:700 }
+		.btn.primary { background:linear-gradient(135deg,#2e7d32,#388e3c); color:#fff }
+		.btn.ghost { background:#f0f5f2; color:#2e7d32 }
+		.related { margin-top:28px }
+		.related .card { background:#fff; border-radius:10px; padding:12px; box-shadow:0 6px 20px rgba(46,125,50,0.04); display:flex; justify-content:space-between; align-items:center; gap:12px }
+		.empty { text-align:center; color:#666; padding:40px 0 }
+	</style>
+</head>
+<body>
+	<header class="header"><div class="container wrap"><a class="brand" href="/index.html"><div class="logo">JS</div><div><strong>JobSphere</strong></div></a></div></header>
+
+	<main class="container">
+		<div class="detail-wrap" id="detailWrap">
+			<div class="detail-header">
+				<div>
+					<h1 id="jobTitle" class="job-title">Loading...</h1>
+					<div id="jobCompany" class="job-company"></div>
+					<div id="badges" class="badges"></div>
+				</div>
+				<div style="text-align:right">
+					<div id="postedDate" style="color:#666; font-size:0.9rem"></div>
+					<div id="jobType" style="margin-top:8px; color:#2e7d32; font-weight:700"></div>
+				</div>
+			</div>
+
+			<div class="meta-row" id="metaRow"></div>
+			<div class="desc" id="jobDesc"></div>
+			<div class="skills" id="jobSkills"></div>
+
+			<div class="actions">
+				<a id="applyNow" class="btn primary" href="#" target="_blank">Apply Now ➜</a>
+				<button class="btn ghost" id="saveBtn">❤️ Save</button>
+				<button class="btn ghost" id="shareBtn">📤 Share</button>
+				<button class="btn ghost" id="reportBtn">⚠️ Report</button>
+			</div>
+
+			<div class="related">
+				<h3 style="color:#2e7d32">Related Jobs</h3>
+				<div id="relatedList"></div>
+			</div>
+		</div>
+	</main>
+
+	<footer class="footer">© JobSphere</footer>
+
+	<script src="/db.js"></script>
+	<script src="/app.js"></script>
+	<script>
+		// Utility: read id from querystring
+		function qParam(name){ const p = new URLSearchParams(window.location.search); return p.get(name); }
+
+		async function loadJobDetails(){
+			const id = qParam('id');
+			let job = null;
+
+			// Try MongoDB via DBModule if configured
+			try{
+				if(window.DBModule && DBModule.DB_CONFIG && DBModule.DB_CONFIG.USE_MONGODB && typeof DBModule.getJobById === 'function'){
+					job = await DBModule.getJobById(id);
+				}
+			}catch(e){ console.warn('Remote fetch failed', e); }
+
+			// Fallback to localStorage
+			if(!job){
+				const jobs = getJobs();
+				job = jobs.find(j=> (j.id && j.id===id) || j.title===id) || null;
+			}
+
+			if(!job){
+				document.getElementById('detailWrap').innerHTML = '<div class="empty"><h3>Job not found</h3><p>It may have been removed. Try browsing other jobs.</p><p><a href="/pages/jobs.html" style="color:#2e7d32; font-weight:700">Back to jobs</a></p></div>';
+				return;
+			}
+
+			// Render fields (use escapeHtml from app.js)
+			document.getElementById('jobTitle').textContent = job.title || 'Untitled';
+			document.getElementById('jobCompany').textContent = job.company || '';
+			document.getElementById('jobDesc').textContent = job.desc || '';
+			document.getElementById('postedDate').textContent = job.posted ? new Date(job.posted).toLocaleDateString() : '';
+			document.getElementById('jobType').textContent = job.type || '';
+
+			// Meta
+			const metaRow = document.getElementById('metaRow');
+			metaRow.innerHTML = '';
+			if(job.location) metaRow.innerHTML += `<div>📍 ${escapeHtml(job.location)}</div>`;
+			if(job.experience) metaRow.innerHTML += `<div>💼 ${escapeHtml(job.experience)}</div>`;
+			if(job.salary) metaRow.innerHTML += `<div>💰 ${escapeHtml(job.salary)}</div>`;
+
+			// Badges
+			const badges = document.getElementById('badges'); badges.innerHTML='';
+			if(job.featured) badges.insertAdjacentHTML('beforeend', '<span class="badge">⭐ Featured</span>');
+			if(job.urgent) badges.insertAdjacentHTML('beforeend', '<span class="badge urgent">🔴 Urgent</span>');
+
+			// Skills
+			const skillsEl = document.getElementById('jobSkills'); skillsEl.innerHTML='';
+			if(job.skills){ job.skills.split(',').map(s=>s.trim()).filter(Boolean).forEach(s=>{ skillsEl.insertAdjacentHTML('beforeend', `<span class="skill">${escapeHtml(s)}</span>`); }); }
+
+			// Actions
+			const apply = document.getElementById('applyNow'); apply.href = job.link || '#';
+			document.getElementById('saveBtn').addEventListener('click', ()=>{
+				const key = 'job_spare_wishlist'; const wl = JSON.parse(localStorage.getItem(key)||'[]');
+				if(!wl.find(x=>x.id===job.id)) { wl.push({id: job.id, title: job.title, company: job.company}); localStorage.setItem(key, JSON.stringify(wl)); showNotification('Saved to wishlist', 'success'); }
+				else showNotification('Already in wishlist', 'info');
+			});
+			document.getElementById('shareBtn').addEventListener('click', ()=>{ if(navigator.share) navigator.share({title: job.title, text: job.desc, url: window.location.href}).catch(()=>{}); else prompt('Copy link', window.location.href); });
+			document.getElementById('reportBtn').addEventListener('click', ()=>{ alert('Thanks — report received.'); });
+
+			// Related jobs
+			try{
+				const jobs = getJobs();
+				const related = jobs.filter(j=> j.id!==job.id && j.category && job.category && j.category===job.category).slice(0,4);
+				const list = document.getElementById('relatedList'); list.innerHTML='';
+				if(related.length===0) list.innerHTML = '<div class="empty"><p>No related jobs found.</p></div>';
+				else related.forEach(r=>{
+					const el = document.createElement('div'); el.className='card';
+					el.innerHTML = `<div><strong>${escapeHtml(r.title)}</strong><div style="color:#666">${escapeHtml(r.company)}</div></div><a href='/pages/job-details.html?id=${encodeURIComponent(r.id||r.title)}' class='btn ghost' style='text-decoration:none'>View</a>`;
+					list.appendChild(el);
+				});
+			}catch(e){ console.warn(e); }
+		}
+
+		document.addEventListener('DOMContentLoaded', loadJobDetails);
+	</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Drafts - JobSphere</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+      .container { max-width: 1000px; margin: 28px auto; padding: 0 16px; }
+      .draft-card { padding: 12px; border-radius: 10px; background: #fff; box-shadow: 0 6px 18px rgba(30,100,40,0.04); margin-bottom: 12px }
+      .actions { display:flex; gap:8px; margin-top:8px }
+      .btn { background: linear-gradient(90deg,#2e7d32,#66bb6a); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer }
+      .btn.secondary { background:#fff; color:#2e7d32; border:1px solid #e3f2e8 }
+    </style>
+  </head>
+  <body>
+    <header class="header"><div class="container wrap"><a class="brand" href="/index.html"><div class="logo">JS</div><div><strong>JobSphere</strong></div></a></div></header>
+    <main class="container">
+      <h2>Saved Drafts</h2>
+      <div id="draftsList"></div>
+      <div style="margin-top:16px"><a href="/pages/post-job.html" class="btn secondary">Create New Draft</a></div>
+    </main>
+    <footer class="footer">© JobSphere</footer>
+    <script src="/db.js"></script>
+    <script src="/app.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', ()=>{
+        if(window.renderDraftsList) renderDraftsList('#draftsList');
+      });
+    </script>
+  </body>
+</html>
